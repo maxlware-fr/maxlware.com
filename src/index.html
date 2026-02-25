@@ -46,9 +46,35 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       max-width: 100px;
       margin-bottom: 10px;
     }
+    #loading-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('assets/loading.png') no-repeat center center fixed;
+      background-size: cover;
+      z-index: 10000;
+      display: none;
+    }
+    #loading-overlay::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      pointer-events: none;
+    }
   </style>
 <script>
   document.addEventListener("DOMContentLoaded", async () => {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'block';
+    }
+
     try {
       const res = await fetch("https://api.maxlware.com/v1/com/access", {
         cache: "no-store"
@@ -56,20 +82,28 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       const data = await res.json();
 
       if (data.com_access === "false") {
-        window.location.href = "maintenance.html";
+        setTimeout(() => {
+          window.location.href = "maintenance.html";
+        }, 1000);
         return;
       }
       const lang = navigator.language.toLowerCase();
       const target = lang.startsWith("fr") ? "fr-fr.html" : "en-en.html";
-      window.location.href = target;
+      setTimeout(() => {
+        window.location.href = target;
+      }, 1000);
 
     } catch (e) {
-      window.location.href = "maintenance.html";
+      setTimeout(() => {
+        window.location.href = "maintenance.html";
+      }, 1000);
     }
   });
 </script>
 </head>
 <body>
+  <div id="loading-overlay"></div>
+
   <noscript>
     <style>
       body { color: #f33; }
