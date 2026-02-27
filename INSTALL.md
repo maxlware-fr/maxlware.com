@@ -1,1 +1,1 @@
-https://nightly.link/maxlware-fr/maxlware.com/workflows/build/main?preview
+https://nightly.link/maxlware-fr/maxlware.com/workflows/build/main/dist
