@@ -76,9 +76,29 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     }
 
     try {
+      const params = new URLSearchParams(window.location.search);
+      const utmSource = params.get("utm_source");
+
+      if (utmSource) {
+        try {
+          await fetch("https://api.maxlware.com/v1/ad/utm-edit", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              source: utmSource,
+              user_agent: navigator.userAgent
+            })
+          });
+        } catch (utmError) {
+          console.error("UTM tracking failed:", utmError);
+        }
+      }
       const res = await fetch("https://api.maxlware.com/v1/com/access", {
         cache: "no-store"
       });
+
       const data = await res.json();
 
       if (data.com_access === "false") {
@@ -89,6 +109,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       }
       const lang = navigator.language.toLowerCase();
       const target = lang.startsWith("fr") ? "fr-fr.html" : "en-en.html";
+
       setTimeout(() => {
         window.location.href = target;
       }, 1000);
