@@ -20,12 +20,14 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       --win-light: #c0c0c0;
       --win-dark: #808080;
       --win-darker: #404040;
+      --police-big: 'Syne';
+      --police: 'sans-serif'
     }
 
     body {
       background-color: var(--dark);
       margin: 0;
-      font-family: 'Console', monospace;
+      font-family: var(--police-big), var(--police);
       color: var(--light);
       line-height: 1.6;
     }
@@ -34,6 +36,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       color: #4fc3f7;
       text-decoration: none;
     }
+
     a:hover {
       text-decoration: underline;
     }
@@ -73,7 +76,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     }
 
     .ascii-art {
-      font-family: 'Console', monospace;
+      font-family: var(--police-big), var(--police);
       white-space: pre;
       color: var(--light);
       line-height: 1.3;
@@ -105,7 +108,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     }
 
     .separator {
-      background-color: black;
+      background-color: #0e0e11;
       display: flex;
       justify-content: center;
       padding: 2vh 0;
@@ -191,7 +194,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     color: #1c1c1c;
     padding: 10px 16px;
     z-index: 999;
-    font-family: 'Console', monospace;
+    font-family: var(--police-big), var(--police);
     border-radius: 6px;
     border: 1px solid rgba(0, 0, 0, 0.1);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -255,7 +258,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     cursor: pointer;
     padding: 4px 8px;
     border-radius: 4px;
-    font-family: 'Console', monospace;
+    font-family: var(--police-big), var(--police);
     font-size: 1.2rem;
     line-height: 1;
     margin-left: 12px;
