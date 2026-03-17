@@ -6,11 +6,6 @@ M   M  A   A   X X   L      WW WW  A   A  R  R   E
 M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
 */
 
-@font-face {
-      font-family: 'Console';
-      src: local('Courier New'), local('Consolas'), monospace;
-    }
-
     :root {
       --primary: #6e48aa;
       --secondary: #9d50bb;
