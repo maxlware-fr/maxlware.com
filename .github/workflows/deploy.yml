@@ -1,4 +1,4 @@
-name: Deploy to Production
+name: Deploy to production
 
 on:
   push:
@@ -6,18 +6,17 @@ on:
       - main
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
 
       - name: Install dependencies
         run: npm install
@@ -25,14 +24,19 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Verify build output
+      - name: Verify build
         run: |
           if [ ! -d "dist" ]; then
-            echo "Error : Dist not here..."
+            echo "dossier dist manquant"
             exit 1
           fi
 
-      - name: Deploy to Cloudflare Pages
+          if [ ! -f "dist/index.html" ]; then
+            echo "index.html manquant"
+            exit 1
+          fi
+
+      - name: Deploy
         uses: cloudflare/pages-action@v1
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
