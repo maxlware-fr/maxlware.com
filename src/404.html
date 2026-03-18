@@ -12,30 +12,129 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>404 - Page Not Found</title>
-<link rel="stylesheet" href="assets/404/style.css">
-<link rel="icon" href="assets/cd.png">
+<link rel="icon" href="assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&display=swap" rel="stylesheet">
 
-<meta name="description" content="Official website of Maxlware." />
+<style>
+@font-face {
+    font-family: 'Console';
+    src: local('Courier New'), local('Consolas'), monospace;
+}
+:root {
+    --primary: #6e48aa;
+    --secondary: #9d50bb;
+    --dark: #0e0e11;
+    --light: #ffffff;
+}
+body {
+    background-color: var(--dark);
+    margin: 0;
+    font-family: 'Console', monospace;
+    color: var(--light);
+    line-height: 1.6;
+}
+a {
+    color: #4fc3f7;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
+}
+.hero {
+    background-color: var(--dark);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+}
+.hero-content {
+    position: relative;
+    z-index: 10;
+    padding: 2rem;
+    max-width: 800px;
+    text-align: center;
+    text-shadow: 0 0 5px rgba(79, 195, 247, 0.5);
+}
+.title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 5rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+.subtitle {
+    color: #bdbdbd;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
 
-    <meta property="og:title" content="Maxlware - Independent developer in France.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://maxlware.fr/">
-    <meta property="og:description" content="Independent developer in France. - Specialized in coding and content creation.">
-    <meta property="og:site_name" content="Maxlware">
-    <meta property="og:locale" content="fr_FR">
+.message-container {
+    height: 1.2rem;
+    margin-bottom: 2rem;
+    color: #9d9d9d;
+    font-size: 1rem;
+    font-family: 'Console', monospace;
+    overflow: hidden;
+    position: relative;
+    text-align: center;
+}
+.message-container span {
+    position: absolute;
+    left: 50%;
+    transform: translate(-50%, 20px);
+    opacity: 0;
+    transition: opacity 0.5s, transform 0.5s;
+}
+.message-container span.active {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
 
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Maxlware - Independent developer in France.">
-    <meta name="twitter:description" content="Independent developer in France. - Specialized in coding and content creation.">
-    
-    <link rel="canonical" href="https://maxlware.fr/">
-
+.go-home {
+    display: inline-block;
+    padding: 0.6rem 1.2rem;
+    background: var(--primary);
+    color: var(--light);
+    border-radius: 6px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+.go-home:hover {
+    background: var(--secondary);
+    text-decoration: none;
+}
+</style>
 </head>
 <body>
-<div class="hero-content">
-    <div class="title cursor">404</div>
-    <div class="subtitle">Oops! The page you are looking for does not exist.</div>
-    <div><a href="index.html">Go back to Home</a></div>
+<div class="hero">
+    <div class="hero-content">
+        <div class="title cursor">404</div>
+        <div class="subtitle">Oops! The page you are looking for does not exist.</div>
+
+        <div class="message-container" style="text-align:center;">
+            <span class="active">Hey.</span>
+            <span>Heyo. :3</span>
+            <span>Hi. :)</span>
+            <span>Hiii. :D</span>
+            <span>Hewo. :O</span>
+        </div>
+
+        <a class="go-home" href="index.html">Go back to Home</a>
+    </div>
 </div>
+
+<script>
+const messages = document.querySelectorAll('.message-container span');
+let current = 0;
+
+setInterval(() => {
+    messages[current].classList.remove('active');
+    current = (current + 1) % messages.length;
+    messages[current].classList.add('active');
+}, 2500);
+</script>
 </body>
 </html>
