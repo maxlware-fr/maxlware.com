@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — Maxlware</title>
+  <link rel="icon" href="assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="docs/assets/docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <span>Maxlware</span>
+    <span class="topbar-sep">/</span>
+    <span style="color:var(--muted)">Docs</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="https://maxlware.com/fr_fr.html">← Retour au site</a>
+    <a class="topbar-link" href="https://github.com/maxlware-fr" target="_blank">GitHub</a>
+    <span class="topbar-version">v1.0</span>
+  </div>
+</header>
+
+<div class="docs-layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Général</span>
+      <a class="sidebar-link active" href="docs.html"><span class="sidebar-link-icon">◆</span> Introduction</a>
+      <a class="sidebar-link" href="docs/getting-started.html"><span class="sidebar-link-icon">▶</span> Démarrage rapide</a>
+      <a class="sidebar-link" href="docs/faq.html"><span class="sidebar-link-icon">?</span> FAQ</a>
+      <a class="sidebar-link" href="docs/changelog.html"><span class="sidebar-link-icon">↺</span> Changelog</a>
+      <a class="sidebar-link" href="docs/uedp.html"><span class="sidebar-link-icon">↺</span> EcoleDirecte App</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">API</span>
+      <a class="sidebar-link" href="api.html"><span class="sidebar-link-icon">#</span> Référence API</a>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="api.html#notification">Notification</a>
+        <a class="sidebar-link" href="api.html#contact">Contact</a>
+        <a class="sidebar-link" href="api.html#auth">Authentification</a>
+        <a class="sidebar-link" href="api.html#statuts">Statuts</a>
+      </div>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Projets</span>
+      <a class="sidebar-link" href="#projets"><span class="sidebar-link-icon">◉</span> Vue d'ensemble</a>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <span class="page-tag">// maxlware.com/docs</span>
+      <h1 class="page-title">Documentation<span class="blink">_</span></h1>
+      <p class="page-desc">Bienvenue dans la documentation officielle de Maxlware. Retrouve ici la référence API, les guides de démarrage et plus.</p>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ Info</div>
+      Cette documentation est en cours de construction. Certaines sections peuvent être incomplètes.
+    </div>
+
+    <h2>Par où commencer ?</h2>
+    <p>Choisis une section selon ce que tu cherches :</p>
+
+    <div class="doc-cards">
+      <a class="doc-card" href="docs/getting-started.html">
+        <span class="doc-card-icon">▶</span>
+        <div class="doc-card-title">Démarrage rapide</div>
+        <p class="doc-card-desc">Premiers pas avec l'API Maxlware en quelques minutes.</p>
+      </a>
+      <a class="doc-card" href="docs/api.html">
+        <span class="doc-card-icon">#</span>
+        <div class="doc-card-title">Référence API</div>
+        <p class="doc-card-desc">Tous les endpoints de <code>api.maxlware.com</code> avec exemples.</p>
+      </a>
+      <a class="doc-card" href="docs/changelog.html">
+        <span class="doc-card-icon">↺</span>
+        <div class="doc-card-title">Changelog</div>
+        <p class="doc-card-desc">Historique des versions et des modifications.</p>
+      </a>
+      <a class="doc-card" href="docs/faq.html">
+        <span class="doc-card-icon">?</span>
+        <div class="doc-card-title">FAQ</div>
+        <p class="doc-card-desc">Questions fréquentes sur les projets Maxlware.</p>
+      </a>
+    </div>
+
+    <h2 id="projets">Projets documentés</h2>
+    <p>L'écosystème Maxlware regroupe plusieurs projets interconnectés :</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Projet</th>
+          <th>Statut</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>api.maxlware.com</code></td>
+          <td><span class="badge badge-new">En ligne</span></td>
+          <td>API centrale — notifications, contacts, authentification.</td>
+        </tr>
+        <tr>
+          <td>EcoleDirecte App</td>
+          <td><span class="badge badge-dep">En cours</span></td>
+          <td>Client desktop pour EcoleDirecte.</td>
+        </tr>
+        <tr>
+          <td>Serveur Minecraft</td>
+          <td><span class="badge badge-dep">En cours</span></td>
+          <td>Serveur custom avec plugins.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2>Stack technique global</h2>
+    <p>Les projets Maxlware sont construits autour des technologies suivantes :</p>
+    <ul>
+      <li><strong>Backend</strong> — Python (FastAPI), Node.js</li>
+      <li><strong>Frontend</strong> — HTML, CSS, JavaScript vanilla</li>
+      <li><strong>Bots</strong> — discord.py</li>
+      <li><strong>Infra</strong> — VPS Linux, Docker, Nginx</li>
+      <li><strong>Emails</strong> — Mailtrap SMTP</li>
+    </ul>
+
+    <hr>
+
+    <p style="font-size:0.82rem; color: var(--muted2);">
+      Dernière mise à jour : Mars 2026 —
+      <a href="https://github.com/maxlware-fr" target="_blank">GitHub</a> ·
+      <a href="https://maxlware.com/fr_fr/contact">Contact</a>
+    </p>
+
+  </main>
+</div>
+
+</body>
+</html>
