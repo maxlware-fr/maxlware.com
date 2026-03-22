@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Référence API — Maxlware Docs</title>
+  <link rel="icon" href="https://maxlware.com/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <a href="https://maxlware.com" style="color:inherit;text-decoration:none;">Maxlware</a>
+    <span class="topbar-sep">/</span>
+    <a href="https://maxlware.com/docs" style="color:var(--muted);text-decoration:none;">Docs</a>
+    <span class="topbar-sep">/</span>
+    <span style="color:var(--accent)">API</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="https://maxlware.com">← Retour au site</a>
+    <a class="topbar-link" href="https://github.com/maxlware-fr" target="_blank">GitHub</a>
+    <span class="topbar-version">v1.0</span>
+  </div>
+</header>
+
+<div class="docs-layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Général</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs"><span class="sidebar-link-icon">◆</span> Introduction</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/getting-started"><span class="sidebar-link-icon">▶</span> Démarrage rapide</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/faq"><span class="sidebar-link-icon">?</span> FAQ</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/changelog"><span class="sidebar-link-icon">↺</span> Changelog</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">API</span>
+      <a class="sidebar-link active" href="https://maxlware.com/docs/api"><span class="sidebar-link-icon">#</span> Référence API</a>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="#overview">Aperçu</a>
+        <a class="sidebar-link" href="#auth">Authentification</a>
+        <a class="sidebar-link" href="#notification">Notification</a>
+        <a class="sidebar-link" href="#contact">Contact</a>
+        <a class="sidebar-link" href="#statuts">Statuts</a>
+        <a class="sidebar-link" href="#erreurs">Codes d'erreur</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <span class="page-tag">// api.maxlware.com/v1</span>
+      <h1 class="page-title">Référence API<span class="blink">_</span></h1>
+      <p class="page-desc">Documentation complète de l'API REST Maxlware. Base URL : <code>https://api.maxlware.com/v1</code></p>
+    </div>
+
+    <h2 id="overview">Aperçu</h2>
+    <p>L'API Maxlware est une API REST retournant du JSON. Elle est utilisée par le site principal, le dashboard interne et les projets associés.</p>
+
+    <table>
+      <thead><tr><th>Propriété</th><th>Valeur</th></tr></thead>
+      <tbody>
+        <tr><td>Base URL</td><td><code>https://api.maxlware.com/v1</code></td></tr>
+        <tr><td>Format</td><td><code>application/json</code></td></tr>
+        <tr><td>Auth</td><td>Bearer token (header <code>Authorization</code>)</td></tr>
+        <tr><td>CORS</td><td>Origines autorisées explicitement</td></tr>
+        <tr><td>HTTPS</td><td>Obligatoire</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠ CORS</div>
+      Les requêtes avec <code>credentials: 'include'</code> nécessitent que ton origine soit explicitement autorisée côté serveur. <code>*</code> ne fonctionne pas avec les credentials.
+    </div>
+
+    <h2 id="notification">Notification</h2>
+    <p>Endpoint public permettant d'afficher une bannière de notification dynamique sur le site.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="badge badge-get">GET</span>
+        <span class="endpoint-path">/com/notification</span>
+        <span class="endpoint-summary">Récupérer la notification active</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Retourne la notification en cours si elle est activée. Aucun token requis.</p>
+        <h4>Réponse 200</h4>
+        <pre><code>{
+  "actived": "true",
+  "message": "Le site sera en maintenance dimanche de 14h à 16h.",
+  "autor": "Maxlware",
+  "marker": "warn"
+}</code></pre>
+        <h4>Champs</h4>
+        <table>
+          <thead><tr><th>Champ</th><th>Type</th><th>Valeurs possibles</th></tr></thead>
+          <tbody>
+            <tr><td><code>actived</code></td><td><span class="param-type">string</span></td><td><code>"true"</code> / <code>"false"</code></td></tr>
+            <tr><td><code>message</code></td><td><span class="param-type">string</span></td><td>Texte affiché</td></tr>
+            <tr><td><code>autor</code></td><td><span class="param-type">string</span></td><td>Auteur optionnel</td></tr>
+            <tr><td><code>marker</code></td><td><span class="param-type">string</span></td><td><code>verified</code> · <code>warn</code> · <code>alert</code></td></tr>
+          </tbody>
+        </table>
+        <div class="callout callout-info">
+          <div class="callout-title">ℹ Polling</div>
+          Le site principal poll cet endpoint toutes les <strong>5 minutes</strong> et n'affiche la bannière que si <code>actived === "true"</code>. La fermeture est mémorisée dans <code>localStorage</code> pendant 24h.
+        </div>
+      </div>
+    </div>
+
+    <h2 id="contact">Contact</h2>
+    <p>Endpoint permettant de soumettre un message via le formulaire de contact du site.</p>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="badge badge-post">POST</span>
+        <span class="endpoint-path">/com/contact</span>
+        <span class="endpoint-summary">Envoyer un message de contact</span>
+      </div>
+      <div class="endpoint-body">
+        <h4>Body (JSON)</h4>
+        <table>
+          <thead><tr><th>Champ</th><th>Type</th><th></th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><code>name</code></td><td><span class="param-type">string</span></td><td><span class="param-required">requis</span></td><td>Nom de l'expéditeur</td></tr>
+            <tr><td><code>email</code></td><td><span class="param-type">string</span></td><td><span class="param-required">requis</span></td><td>Adresse email</td></tr>
+            <tr><td><code>message</code></td><td><span class="param-type">string</span></td><td><span class="param-required">requis</span></td><td>Corps du message</td></tr>
+            <tr><td><code>subject</code></td><td><span class="param-type">string</span></td><td><span class="param-optional">optionnel</span></td><td>Sujet du message</td></tr>
+          </tbody>
+        </table>
+        <h4>Réponse 200</h4>
+        <pre><code>{ "status": "ok", "message": "Message envoyé." }</code></pre>
+        <div class="callout callout-info">
+          <div class="callout-title">ℹ Email</div>
+          Les messages sont transmis via <strong>Mailtrap SMTP</strong> et visibles dans le dashboard interne.
+        </div>
+      </div>
+    </div>
+
+    <h2 id="statuts">Statuts</h2>
+    <p>L'endpoint de statut expose l'état des services pour le badge affiché sur le site (<code>statuts.maxlware.com</code>).</p>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="badge badge-get">GET</span>
+        <span class="endpoint-path">/status</span>
+        <span class="endpoint-summary">État des services</span>
+      </div>
+      <div class="endpoint-body">
+        <pre><code>{
+  "status": "operational",
+  "services": {
+    "api": "operational",
+    "site": "operational",
+    "interne": "operational"
+  },
+  "updated_at": "2026-03-22T10:00:00Z"
+}</code></pre>
+      </div>
+    </div>
+
+    <h2 id="erreurs">Codes d'erreur</h2>
+    <table>
+      <thead><tr><th>Code</th><th>Signification</th></tr></thead>
+      <tbody>
+        <tr><td><code>400</code></td><td>Requête invalide — champ manquant ou malformé.</td></tr>
+        <tr><td><code>401</code></td><td>Non authentifié — token absent ou invalide.</td></tr>
+        <tr><td><code>403</code></td><td>Accès refusé — droits insuffisants.</td></tr>
+        <tr><td><code>404</code></td><td>Ressource introuvable.</td></tr>
+        <tr><td><code>422</code></td><td>Erreur de validation (FastAPI).</td></tr>
+        <tr><td><code>500</code></td><td>Erreur serveur interne.</td></tr>
+      </tbody>
+    </table>
+
+    <hr>
+    <p style="font-size:0.82rem; color: var(--muted2);">
+      <a href="https://maxlware.com/docs">← Retour à l'index</a> · Dernière mise à jour : 2026
+    </p>
+
+  </main>
+</div>
+
+</body>
+</html>
