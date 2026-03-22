@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ — Maxlware Docs</title>
+  <link rel="icon" href="https://maxlware.com/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <a href="https://maxlware.com" style="color:inherit;text-decoration:none;">Maxlware</a>
+    <span class="topbar-sep">/</span>
+    <a href="https://maxlware.com/docs" style="color:var(--muted);text-decoration:none;">Docs</a>
+    <span class="topbar-sep">/</span>
+    <span style="color:var(--accent)">FAQ</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="https://maxlware.com"">← Retour au site</a>
+    <a class="topbar-link" href="https://github.com/maxlware-fr" target="_blank">GitHub</a>
+    <span class="topbar-version">v1.x</span>
+  </div>
+</header>
+
+<div class="docs-layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Général</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs"><span class="sidebar-link-icon">◆</span> Introduction</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/getting-started"><span class="sidebar-link-icon">▶</span> Démarrage rapide</a>
+      <a class="sidebar-link active" href="https://maxlware.com/docs/faq"><span class="sidebar-link-icon">?</span> FAQ</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/changelog"><span class="sidebar-link-icon">↺</span> Changelog</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">API</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs/api"><span class="sidebar-link-icon">#</span> Référence API</a>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#notification">Notification</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#contact">Contact</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#auth">Authentification</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#statuts">Statuts</a>
+      </div>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Catégories</span>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="#api">API & Requêtes</a>
+        <a class="sidebar-link" href="#site">Site principal</a>
+        <a class="sidebar-link" href="#general">Général</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <span class="page-tag">// foire aux questions</span>
+      <h1 class="page-title">FAQ<span class="blink">_</span></h1>
+      <p class="page-desc">Questions fréquentes sur l'API, le site et les projets Maxlware.</p>
+    </div>
+
+    <h2 id="api">API & Requêtes</h2>
+
+    <details class="faq-item">
+      <summary class="faq-question">Pourquoi est-ce que j'obtiens une erreur CORS ?</summary>
+      <div class="faq-answer">
+        <p>L'erreur CORS survient quand ton origine n'est pas autorisée côté serveur. Deux cas courants :</p>
+        <ul>
+          <li>Tu utilises <code>credentials: 'include'</code> avec <code>allow_origins=["*"]</code> — ce n'est pas compatible. Il faut lister les origines explicitement.</li>
+          <li>Tu testes depuis un fichier local (<code>file://</code>) — l'origine est <code>"null"</code>. Elle doit être ajoutée explicitement dans la config FastAPI.</li>
+        </ul>
+        <p>Solution : utilise plutôt le header <code>Authorization: Bearer &lt;token&gt;</code> sans credentials.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Comment tester l'API en local ?</summary>
+      <div class="faq-answer">
+        <p>Utilise <code>curl</code> ou un outil comme Postman/Insomnia pour éviter les contraintes CORS du navigateur :</p>
+        <pre><code>curl https://api.maxlware.com/v1/com/notification</code></pre>
+        <p>Si tu veux tester depuis un navigateur, sers ton fichier HTML depuis un serveur local (ex: <code>python -m http.server 8080</code>) plutôt qu'en <code>file://</code>.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">L'API retourne une erreur 422, pourquoi ?</summary>
+      <div class="faq-answer">
+        <p>L'erreur <code>422 Unprocessable Entity</code> est émise par FastAPI quand les données envoyées ne correspondent pas au schéma attendu. Vérifie :</p>
+        <ul>
+          <li>Que le <code>Content-Type</code> est bien <code>application/json</code></li>
+          <li>Que tous les champs <span class="param-required">requis</span> sont présents</li>
+          <li>Que les types de données sont corrects (string, int…)</li>
+        </ul>
+        <p>Le corps de la réponse 422 contient un champ <code>detail</code> qui liste les erreurs précises.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Mon token expire après combien de temps ?</summary>
+      <div class="faq-answer">
+        <p>La durée d'expiration dépend de la configuration serveur. En cas d'erreur <code>401</code>, refais un <code>POST /auth/login</code> pour obtenir un nouveau token et mets à jour ton <code>localStorage</code>.</p>
+      </div>
+    </details>
+
+    <h2 id="site">Site principal</h2>
+
+    <details class="faq-item">
+      <summary class="faq-question">La bannière de notification ne s'affiche pas, pourquoi ?</summary>
+      <div class="faq-answer">
+        <p>Deux raisons possibles :</p>
+        <ul>
+          <li><strong>La notification est désactivée côté API</strong> — <code>actived</code> vaut <code>"false"</code>.</li>
+          <li><strong>Tu l'as fermée dans les dernières 24h</strong> — le timestamp est stocké dans <code>localStorage</code> sous la clé <code>notificationLastClosed</code>. Supprime-le pour forcer l'affichage :
+          <pre><code>localStorage.removeItem('notificationLastClosed');</code></pre></li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">C'est quoi l'easter egg du site ?</summary>
+      <div class="faq-answer">
+        <p>Tape la séquence <kbd>a</kbd> <kbd>d</kbd> <kbd>a</kbd> <kbd>m</kbd> sur ton clavier depuis n'importe quelle page. Un effet visuel (et sonore) se déclenchera. 🎉</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Les logos partenaires ne chargent pas.</summary>
+      <div class="faq-answer">
+        <p>Les logos sont chargés depuis <code>assets/</code> en chemin relatif. Assure-toi que les fichiers <code>logo_iptron.png</code>, <code>logo_cloud.png</code>, <code>logo_mxlw_dev.png</code> et <code>logo_galactix.png</code> sont bien présents dans le dossier <code>assets/</code> à la racine.</p>
+      </div>
+    </details>
+
+    <h2 id="general">Général</h2>
+
+    <details class="faq-item">
+      <summary class="faq-question">Comment contacter Maxlware ?</summary>
+      <div class="faq-answer">
+        <p>Plusieurs options :</p>
+        <ul>
+          <li>Via le <a href="https://maxlware.com/fr_fr/contact">formulaire de contact</a> sur le site</li>
+          <li>Sur <a href="https://discord.gg/5rUDZ4kXdS" target="_blank">Discord</a></li>
+          <li>Sur <a href="https://x.com/maxlware_pro" target="_blank">Twitter/X</a></li>
+          <li>Via <a href="https://github.com/maxlware-fr" target="_blank">GitHub</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Est-ce que l'API est publique ?</summary>
+      <div class="faq-answer">
+        <p>Les endpoints publics (comme <code>/com/notification</code>) sont accessibles sans token. Les routes admin sont réservées à un usage interne. L'API n'est pas ouverte à des tiers pour le moment.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Comment vérifier le statut des services ?</summary>
+      <div class="faq-answer">
+        <p>Consulte <a href="https://statuts.maxlware.com" target="_blank">statuts.maxlware.com</a> pour voir l'état en temps réel de tous les services. Le badge est également affiché en bas du site principal.</p>
+      </div>
+    </details>
+
+    <hr>
+
+    <div class="callout callout-success">
+      <div class="callout-title">✓ Question non listée ?</div>
+      Ouvre une discussion sur <a href="https://github.com/maxlware-fr" target="_blank">GitHub</a> ou contacte directement via <a href="https://maxlware.com/fr_fr/contact" target="_blank">le formulaire</a>.
+    </div>
+
+    <p style="font-size:0.82rem; color: var(--muted2); margin-top: 2rem;">
+      <a href="https://maxlware.com/docs">← Retour à l'index</a> · Dernière mise à jour : Mars 2026
+    </p>
+
+  </main>
+</div>
+
+</body>
+</html>
