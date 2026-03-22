@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoleDirecte App — Maxlware Docs</title>
+  <link rel="icon" href="https://maxlware.com/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/docs.css">
+  <style>
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin: 1.2rem 0;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 1.1rem;
+    }
+
+    .feature-card-icon {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .feature-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: var(--light);
+      margin-bottom: 0.25rem;
+    }
+
+    .feature-card-desc {
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .step-list {
+      list-style: none;
+      padding: 0;
+      counter-reset: steps;
+    }
+
+    .step-list li {
+      counter-increment: steps;
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1.3rem;
+      align-items: flex-start;
+    }
+
+    .step-list li::before {
+      content: counter(steps);
+      flex-shrink: 0;
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      background: rgba(110, 72, 170, 0.2);
+      border: 1px solid rgba(110, 72, 170, 0.4);
+      color: #c49ef5;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .step-content { flex: 1; }
+    .step-title { font-weight: 700; font-size: 0.9rem; color: var(--light); margin-bottom: 0.25rem; }
+    .step-desc { font-size: 0.85rem; color: var(--muted); margin: 0; }
+
+    .wip-block {
+      background: repeating-linear-gradient(
+        45deg,
+        rgba(240,168,50,0.03),
+        rgba(240,168,50,0.03) 10px,
+        transparent 10px,
+        transparent 20px
+      );
+      border: 1px dashed rgba(240,168,50,0.3);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin: 1rem 0;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .wip-block code {
+      background: rgba(240,168,50,0.08);
+      border-color: rgba(240,168,50,0.2);
+      color: #f0a832;
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 1.5rem 0;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+    }
+
+    .arch-box {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.9rem 1rem;
+      text-align: center;
+    }
+
+    .arch-box-label {
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--muted2);
+      margin-bottom: 0.3rem;
+    }
+
+    .arch-box-name {
+      font-size: 0.88rem;
+      color: var(--light);
+      font-weight: 700;
+    }
+
+    .arch-box-sub {
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.15rem;
+    }
+
+    .arch-arrow {
+      display: flex;
+      align-items: center;
+      padding: 0 0.6rem;
+      color: var(--primary);
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .os-badges {
+      display: flex;
+      gap: 0.6rem;
+      flex-wrap: wrap;
+      margin: 0.8rem 0;
+    }
+
+    .os-badge {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      padding: 0.25rem 0.7rem;
+      border-radius: 4px;
+      border: 1px solid var(--border2);
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .os-badge.supported { border-color: rgba(76,175,125,0.3); color: var(--success); background: rgba(76,175,125,0.06); }
+    .os-badge.wip { border-color: rgba(240,168,50,0.3); color: var(--warn); background: rgba(240,168,50,0.06); }
+    .os-badge.planned { border-color: var(--border); color: var(--muted2); }
+  </style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <a href="https://maxlware.com" style="color:inherit;text-decoration:none;">Maxlware</a>
+    <span class="topbar-sep">/</span>
+    <a href="https://maxlware.com/docs" style="color:var(--muted);text-decoration:none;">Docs</a>
+    <span class="topbar-sep">/</span>
+    <span style="color:var(--accent)">EcoleDirecte App</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="https://maxlware.com/docs"">← Retour au site</a>
+    <a class="topbar-link" href="https://github.com/maxlware-fr" target="_blank">GitHub</a>
+    <span class="topbar-version" style="color:var(--warn);background:rgba(240,168,50,0.1);border-color:rgba(240,168,50,0.25);">En cours</span>
+  </div>
+</header>
+
+<div class="docs-layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Général</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs"><span class="sidebar-link-icon">◆</span> Introduction</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/getting-started"><span class="sidebar-link-icon">▶</span> Démarrage rapide</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/faq"><span class="sidebar-link-icon">?</span> FAQ</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/changelog"><span class="sidebar-link-icon">↺</span> Changelog</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">API</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs/api"><span class="sidebar-link-icon">#</span> Référence API</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">EcoleDirecte App</span>
+      <a class="sidebar-link active" href="https://maxlware.com/docs/uedp"><span class="sidebar-link-icon">◉</span> Vue d'ensemble</a>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="#presentation">Présentation</a>
+        <a class="sidebar-link" href="#fonctionnalites">Fonctionnalités</a>
+        <a class="sidebar-link" href="#architecture">Architecture</a>
+        <a class="sidebar-link" href="#installation">Installation</a>
+        <a class="sidebar-link" href="#api-ed">API EcoleDirecte</a>
+        <a class="sidebar-link" href="#roadmap">Roadmap</a>
+        <a class="sidebar-link" href="#faq">FAQ</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <span class="page-tag">// projet · en cours de développement</span>
+      <h1 class="page-title">EcoleDirecte App<span class="blink">_</span></h1>
+      <p class="page-desc">Un client desktop pour EcoleDirecte — accède à tes notes, emploi du temps et messagerie sans passer par le navigateur.</p>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠ Projet en cours</div>
+      EcoleDirecte App est actuellement en développement actif. Cette documentation évolue avec le projet. Les sections marquées <code>// à compléter</code> seront mises à jour au fil des avancées.
+    </div>
+
+    <h2 id="presentation">Présentation</h2>
+    <p>EcoleDirecte App est une application desktop développée par Maxlware permettant d'accéder aux services EcoleDirecte sans navigateur web. L'objectif est d'offrir une expérience plus rapide, plus propre et plus personnalisable que le site officiel.</p>
+
+    <p>Le projet répond à un besoin simple : EcoleDirecte est lent, encombré de publicités et peu ergonomique. Une app native permet de contourner ça.</p>
+
+    <div class="os-badges">
+      <span class="os-badge wip">● Windows (en cours)</span>
+      <span class="os-badge planned">● macOS (en cours)</span>
+      <span class="os-badge planned">○ Linux (prévu)</span>
+    </div>
+
+    <h2 id="fonctionnalites">Fonctionnalités prévues</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-card-icon">📊</span>
+        <div class="feature-card-title">Notes & Moyennes</div>
+        <p class="feature-card-desc">Consultation des notes par matière, calcul des moyennes générales et par période.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-card-icon">🗓</span>
+        <div class="feature-card-title">Emploi du temps</div>
+        <p class="feature-card-desc">Vue hebdomadaire de l'EDT avec détail des cours, salles et professeurs.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-card-icon">✉️</span>
+        <div class="feature-card-title">Messagerie</div>
+        <p class="feature-card-desc">Lecture et envoi de messages internes EcoleDirecte.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-card-icon">📋</span>
+        <div class="feature-card-title">Cahier de textes</div>
+        <p class="feature-card-desc">Accès aux devoirs et au cahier de texte par matière.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-card-icon">🔔</span>
+        <div class="feature-card-title">Notifications</div>
+        <p class="feature-card-desc">Notifications système lors de l'ajout d'une nouvelle note ou d'un message.</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-card-icon">🌙</span>
+        <div class="feature-card-title">Thème sombre</div>
+        <p class="feature-card-desc">Interface entièrement en dark mode, cohérente avec l'écosystème Maxlware.</p>
+      </div>
+    </div>
+
+    <h2 id="architecture">Architecture</h2>
+    <p>L'application repose sur une architecture deux couches : un backend Python qui communique avec l'API EcoleDirecte, et un frontend Electron qui affiche les données.</p>
+
+    <div class="arch-row">
+      <div class="arch-box">
+        <div class="arch-box-label">Frontend</div>
+        <div class="arch-box-name">Electron</div>
+        <div class="arch-box-sub">HTML · CSS · JS</div>
+      </div>
+      <div class="arch-arrow">⟷</div>
+      <div class="arch-box">
+        <div class="arch-box-label">Backend local</div>
+        <div class="arch-box-name">Python</div>
+        <div class="arch-box-sub">HTTP · Parsing</div>
+      </div>
+      <div class="arch-arrow">⟶</div>
+      <div class="arch-box">
+        <div class="arch-box-label">API externe</div>
+        <div class="arch-box-name">EcoleDirecte</div>
+        <div class="arch-box-sub">api.ecoledirecte.com</div>
+      </div>
+    </div>
+
+    <table>
+      <thead><tr><th>Couche</th><th>Technologie</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr>
+          <td>Frontend</td>
+          <td><code>Electron</code></td>
+          <td>Fenêtre native, rendu HTML/CSS/JS, IPC vers le backend</td>
+        </tr>
+        <tr>
+          <td>Backend</td>
+          <td><code>Python</code></td>
+          <td>Authentification, requêtes vers l'API ED, parsing JSON</td>
+        </tr>
+        <tr>
+          <td>Communication</td>
+          <td><code>IPC / HTTP local</code></td>
+          <td>Échange de données entre Electron et Python</td>
+        </tr>
+        <tr>
+          <td>Stockage</td>
+          <td><code>JSON / SQLite</code></td>
+          <td>Cache local des données (notes, EDT…)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="installation">Installation</h2>
+
+    <div class="wip-block">
+      <strong style="color:var(--warn); font-family:var(--mono); font-size:0.8rem;">// à compléter</strong><br>
+      L'installateur n'est pas encore disponible. Les étapes ci-dessous reflètent le process de développement local.
+    </div>
+
+    <h3>Prérequis</h3>
+    <ul>
+      <li>Python <code>3.10+</code></li>
+      <li>Node.js <code>18+</code> et npm</li>
+      <li>Un compte EcoleDirecte valide</li>
+    </ul>
+
+    <h3>En mode développement</h3>
+
+    <ol class="step-list">
+      <li>
+        <div class="step-content">
+          <div class="step-title">Cloner le dépôt</div>
+          <pre><code>git clone https://github.com/maxlware-fr/Unnoficial-EcoleDirectePlus.git
+cd ecoledirecte-app</code></pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <div class="step-title">Installer les dépendances Electron</div>
+          <pre><code>npm install</code></pre>
+        </div>
+      </li>
+      <li>
+        <div class="step-content">
+          <div class="step-title">Lancer l'application</div>
+          <pre><code>npm start</code></pre>
+        </div>
+      </li>
+    </ol>
+
+    <h2 id="api-ed">API EcoleDirecte</h2>
+    <p>L'app consomme l'API non-officielle d'EcoleDirecte. Voici les endpoints principaux utilisés :</p>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠ API non officielle</div>
+      EcoleDirecte ne fournit pas d'API publique documentée. Les endpoints utilisés sont issus de reverse engineering et peuvent changer sans préavis.
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="badge badge-post">POST</span>
+        <span class="endpoint-path">https://api.ecoledirecte.com/v3/login.awp</span>
+        <span class="endpoint-summary">Authentification</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Retourne un token de session (<code>token</code>) à inclure dans les headers de toutes les requêtes suivantes.</p>
+        <h4>Body (form-encoded)</h4>
+        <pre><code>data={"identifiant":"ton_login","motdepasse":"ton_mdp"}</code></pre>
+        <h4>Réponse</h4>
+        <pre><code>{
+  "code": 200,
+  "token": "abc123...",
+  "data": {
+    "accounts": [{ "id": 12345, "prenom": "Prénom", "nom": "Nom" }]
+  }
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="badge badge-post">POST</span>
+        <span class="endpoint-path">/v3/eleves/{id}/notes.awp</span>
+        <span class="endpoint-summary">Récupérer les notes</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Nécessite le header <code>X-Token: &lt;token&gt;</code>.</p>
+        <pre><code>Headers:
+  X-Token: abc123...
+  Content-Type: application/x-www-form-urlencoded
+
+Body:
+  data={}</code></pre>
+      </div>
+    </div>
+
+    <div class="endpoint">
+      <div class="endpoint-header">
+        <span class="badge badge-post">POST</span>
+        <span class="endpoint-path">/v3/eleves/{id}/emploidutemps.awp</span>
+        <span class="endpoint-summary">Récupérer l'emploi du temps</span>
+      </div>
+      <div class="endpoint-body">
+        <p>Paramètre <code>dateDebut</code> et <code>dateFin</code> à passer dans le body data.</p>
+        <pre><code>data={"dateDebut":"2026-03-17","dateFin":"2026-03-21"}</code></pre>
+      </div>
+    </div>
+
+    <h2 id="roadmap">Roadmap</h2>
+
+    <table>
+      <thead>
+        <tr><th>Fonctionnalité</th><th>Statut</th><th>Version cible</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Authentification EcoleDirecte</td>
+          <td><span class="badge badge-dep">En cours</span></td>
+          <td><code>v0.1</code></td>
+        </tr>
+        <tr>
+          <td>Affichage des notes</td>
+          <td><span class="badge badge-dep">En cours</span></td>
+          <td><code>v0.1</code></td>
+        </tr>
+        <tr>
+          <td>Emploi du temps</td>
+          <td><span class="badge badge-dep">Planifié</span></td>
+          <td><code>v0.2</code></td>
+        </tr>
+        <tr>
+          <td>Messagerie</td>
+          <td><span class="badge badge-dep">Planifié</span></td>
+          <td><code>v0.3</code></td>
+        </tr>
+        <tr>
+          <td>Cahier de textes</td>
+          <td><span class="badge badge-dep">Planifié</span></td>
+          <td><code>v0.3</code></td>
+        </tr>
+        <tr>
+          <td>Notifications système</td>
+          <td><span class="badge badge-dep">Planifié</span></td>
+          <td><code>v0.4</code></td>
+        </tr>
+        <tr>
+          <td>Installateur Windows</td>
+          <td><span class="badge badge-dep">Planifié</span></td>
+          <td><code>v1.0</code></td>
+        </tr>
+        <tr>
+          <td>Support macOS / Linux</td>
+          <td><span class="badge badge-dep">Planifié</span></td>
+          <td><code>v1.x</code></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 id="faq">FAQ</h2>
+
+    <details class="faq-item">
+      <summary class="faq-question">Est-ce que l'app est autorisée par EcoleDirecte ?</summary>
+      <div class="faq-answer">
+        <p>EcoleDirecte ne fournit pas d'API officielle ni de programme partenaire. L'app utilise les mêmes endpoints que le navigateur, elle ne fait rien de plus que ce que tu ferais manuellement. Utilise-la à ta propre discrétion.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Mes identifiants sont-ils stockés quelque part ?</summary>
+      <div class="faq-answer">
+        <p>Les identifiants ne transitent jamais par les serveurs Maxlware. Tout se passe localement sur ta machine : le backend Python envoie directement ta requête à <code>api.ecoledirecte.com</code>. Seul le token de session peut être mis en cache local.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">L'app fonctionnera-t-elle si EcoleDirecte change son API ?</summary>
+      <div class="faq-answer">
+        <p>Potentiellement non. Puisque l'API n'est pas officielle, EcoleDirecte peut modifier ses endpoints à tout moment. En cas de panne, une mise à jour de l'app sera nécessaire.</p>
+      </div>
+    </details>
+
+    <details class="faq-item">
+      <summary class="faq-question">Quand sera disponible la première version téléchargeable ?</summary>
+      <div class="faq-answer">
+        <p>Pas de date fixée pour le moment. Suis l'avancement sur <a href="https://github.com/maxlware-fr" target="_blank">GitHub</a> ou rejoins le <a href="https://discord.gg/5rUDZ4kXdS" target="_blank">Discord</a> pour être notifié.</p>
+      </div>
+    </details>
+
+    <hr>
+    <p style="font-size:0.82rem; color: var(--muted2);">
+      <a href="https://maxlware.com/docs">← Retour à l'index</a> ·
+      <a href="https://maxlware.com/docs/changelog">Changelog</a> ·
+      Dernière mise à jour : Mars 2026
+    </p>
+
+  </main>
+</div>
+
+</body>
+</html>

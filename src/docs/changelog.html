@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Changelog — Maxlware Docs</title>
+  <link rel="icon" href="https://maxlware.com/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <a href="https://maxlware.com" style="color:inherit;text-decoration:none;">Maxlware</a>
+    <span class="topbar-sep">/</span>
+    <a href="https://maxlware.com/docs" style="color:var(--muted);text-decoration:none;">Docs</a>
+    <span class="topbar-sep">/</span>
+    <span style="color:var(--accent)">Changelog</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="https://maxlware.com/docs">← Retour au site</a>
+    <a class="topbar-link" href="https://github.com/maxlware-fr" target="_blank">GitHub</a>
+    <span class="topbar-version">v1.x</span>
+  </div>
+</header>
+
+<div class="docs-layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Général</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs"><span class="sidebar-link-icon">◆</span> Introduction</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/getting-started"><span class="sidebar-link-icon">▶</span> Démarrage rapide</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/faq"><span class="sidebar-link-icon">?</span> FAQ</a>
+      <a class="sidebar-link active" href="https://maxlware.com/docs/changelog"><span class="sidebar-link-icon">↺</span> Changelog</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">API</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs/api"><span class="sidebar-link-icon">#</span> Référence API</a>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#notification">Notification</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#contact">Contact</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#auth">Authentification</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#statuts">Statuts</a>
+      </div>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Versions</span>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="#v1-2">v1.2</a>
+        <a class="sidebar-link" href="#v1-1">v1.1</a>
+        <a class="sidebar-link" href="#v1-0">v1.0</a>
+        <a class="sidebar-link" href="#v0-9">v0.9</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <span class="page-tag">// historique</span>
+      <h1 class="page-title">Changelog<span class="blink">_</span></h1>
+      <p class="page-desc">Toutes les modifications notables apportées aux projets Maxlware, dans l'ordre chronologique inverse.</p>
+    </div>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ Convention</div>
+      Les versions suivent <strong>SemVer</strong> : <code>MAJEUR.MINEUR.PATCH</code>. Les breaking changes sont marqués <span class="badge badge-break">break</span>.
+    </div>
+
+    <div class="changelog-entry" id="v1-2">
+      <div class="changelog-dot"></div>
+      <div class="changelog-version">
+        v1.2.0
+        <span class="badge badge-new">Majeur</span>
+      </div>
+      <div class="changelog-date">Mars 2026</div>
+      <ul class="changelog-items">
+        <li><span class="badge badge-new">NEW</span> Sections Projets, Stack et CTA ajoutées au site principal.</li>
+        <li><span class="badge badge-new">NEW</span> Scroll reveal avec IntersectionObserver sur toutes les sections.</li>
+        <li><span class="badge badge-new">NEW</span> Pages de documentation (<code>docs/</code>) avec design unifié.</li>
+        <li><span class="badge badge-fix">FIX</span> Flèche ↓ animée dans le hero pour inviter au scroll.</li>
+        <li><span class="badge badge-fix">FIX</span> Partenaires diapo : transition opacity corrigée sur mobile.</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry" id="v1-1">
+      <div class="changelog-dot"></div>
+      <div class="changelog-version">
+        v1.1.0
+        <span class="badge badge-new">Mineur</span>
+      </div>
+      <div class="changelog-date">Janvier 2026</div>
+      <ul class="changelog-items">
+        <li><span class="badge badge-new">NEW</span> Dashboard interne (<code>interne.maxlware.com</code>) avec authentification Bearer.</li>
+        <li><span class="badge badge-new">NEW</span> Endpoint <code>GET /admin/contact/messages</code> pour la liste des contacts.</li>
+        <li><span class="badge badge-fix">FIX</span> CORS : remplacement de <code>allow_origins=["*"]</code> par des origines explicites.</li>
+        <li><span class="badge badge-fix">FIX</span> Dépendance FastAPI <code>verify_any_auth</code> ajoutée pour les routes admin.</li>
+        <li><span class="badge badge-fix">FIX</span> Mismatch token interne / admin résolu (format Bearer unifié).</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry" id="v1-0">
+      <div class="changelog-dot"></div>
+      <div class="changelog-version">
+        v1.0.0
+        <span class="badge badge-new">Stable</span>
+      </div>
+      <div class="changelog-date">Novembre 2025</div>
+      <ul class="changelog-items">
+        <li><span class="badge badge-new">NEW</span> Mise en ligne officielle de <code>maxlware.com</code>.</li>
+        <li><span class="badge badge-new">NEW</span> API v1 déployée sur <code>api.maxlware.com</code>.</li>
+        <li><span class="badge badge-new">NEW</span> Système de notification dynamique (<code>/com/notification</code>).</li>
+        <li><span class="badge badge-new">NEW</span> Formulaire de contact avec Mailtrap SMTP.</li>
+        <li><span class="badge badge-new">NEW</span> Easter egg clavier activé par la séquence <kbd>a</kbd><kbd>d</kbd><kbd>a</kbd><kbd>m</kbd>.</li>
+        <li><span class="badge badge-new">NEW</span> Diapo de partenaires (rotation toutes les 3 secondes).</li>
+        <li><span class="badge badge-new">NEW</span> Badge statut en temps réel via <code>statuts.maxlware.com</code>.</li>
+      </ul>
+    </div>
+
+    <div class="changelog-entry" id="v0-9">
+      <div class="changelog-dot changelog-dot--minor"></div>
+      <div class="changelog-version">
+        v0.9.0
+        <span class="badge badge-dep">Bêta</span>
+      </div>
+      <div class="changelog-date">Septembre 2025</div>
+      <ul class="changelog-items">
+        <li><span class="badge badge-new">NEW</span> Prototype initial du site — design terminal sombre.</li>
+        <li><span class="badge badge-new">NEW</span> BrawlBoost Discord bot — commandes slash, modals, persistence JSON.</li>
+        <li><span class="badge badge-new">NEW</span> Script GTFS Node.js pour le calcul d'itinéraires de bus.</li>
+        <li><span class="badge badge-fix">FIX</span> Bot Discord : token invalide après rotation — résolu via Privileged Gateway Intents.</li>
+        <li><span class="badge badge-dep">DÉPR</span> Ancien système de notifications statiques remplacé par l'API dynamique.</li>
+      </ul>
+    </div>
+
+    <hr>
+    <p style="font-size:0.82rem; color: var(--muted2);">
+      <a href="https://maxlware.com/docs">← Retour à l'index</a> · Dernière mise à jour : Mars 2026
+    </p>
+
+  </main>
+</div>
+
+</body>
+</html>

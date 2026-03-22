@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Démarrage rapide — Maxlware Docs</title>
+  <link rel="icon" href="https://maxlware.com/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/docs.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-logo">
+    <a href="https://maxlware.com" style="color:inherit;text-decoration:none;">Maxlware</a>
+    <span class="topbar-sep">/</span>
+    <a href="https://maxlware.com/docs" style="color:var(--muted);text-decoration:none;">Docs</a>
+    <span class="topbar-sep">/</span>
+    <span style="color:var(--accent)">Démarrage rapide</span>
+  </div>
+  <div class="topbar-right">
+    <a class="topbar-link" href="https://maxlware.com/docs">← Retour au site</a>
+    <a class="topbar-link" href="https://github.com/maxlware-fr" target="_blank">GitHub</a>
+    <span class="topbar-version">v1.0</span>
+  </div>
+</header>
+
+<div class="docs-layout">
+
+  <nav class="sidebar">
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Général</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs"><span class="sidebar-link-icon">◆</span> Introduction</a>
+      <a class="sidebar-link active" href="https://maxlware.com/docs/getting-started"><span class="sidebar-link-icon">▶</span> Démarrage rapide</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/faq"><span class="sidebar-link-icon">?</span> FAQ</a>
+      <a class="sidebar-link" href="https://maxlware.com/docs/changelog"><span class="sidebar-link-icon">↺</span> Changelog</a>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">API</span>
+      <a class="sidebar-link" href="https://maxlware.com/docs/api"><span class="sidebar-link-icon">#</span> Référence API</a>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#notification">Notification</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#contact">Contact</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#auth">Authentification</a>
+        <a class="sidebar-link" href="https://maxlware.com/docs/api#statuts">Statuts</a>
+      </div>
+    </div>
+    <div class="sidebar-group">
+      <span class="sidebar-group-label">Sur cette page</span>
+      <div class="sidebar-sub">
+        <a class="sidebar-link" href="#step1">1. Prérequis</a>
+        <a class="sidebar-link" href="#step2">2. Premier appel</a>
+        <a class="sidebar-link" href="#step3">3. Avec auth</a>
+        <a class="sidebar-link" href="#step4">4. Intégration</a>
+      </div>
+    </div>
+  </nav>
+
+  <main class="main-content">
+
+    <div class="page-header">
+      <span class="page-tag">// guide</span>
+      <h1 class="page-title">Démarrage rapide<span class="blink">_</span></h1>
+      <p class="page-desc">Fais ton premier appel à l'API Maxlware en moins de 5 minutes.</p>
+    </div>
+
+    <h2 id="step1">1. Prérequis</h2>
+    <p>Aucune installation requise pour consommer l'API. Tu as juste besoin de :</p>
+    <ul>
+      <li>Un outil pour faire des requêtes HTTP (<code>fetch</code>, <code>curl</code>, Postman, etc.)</li>
+      <li>Une connexion HTTPS (l'API n'accepte pas HTTP)</li>
+      <li>Un token Bearer si tu accèdes aux routes admin</li>
+    </ul>
+
+    <div class="callout callout-info">
+      <div class="callout-title">ℹ Base URL</div>
+      Tous les exemples utilisent <code>https://api.maxlware.com/v1</code> comme base.
+    </div>
+
+    <h2 id="step2">2. Premier appel — Notification</h2>
+    <p>L'endpoint <code>/com/notification</code> est public. C'est le plus simple pour tester :</p>
+
+    <h4>Avec curl</h4>
+    <pre><code>curl https://api.maxlware.com/v1/com/notification</code></pre>
+
+    <h4>Avec JavaScript (fetch)</h4>
+    <pre><code>const res = await fetch('https://api.maxlware.com/v1/com/notification');
+const data = await res.json();
+
+if (data.actived === "true") {
+  console.log("Notification active :", data.message);
+}</code></pre>
+
+    <h4>Avec Python (requests)</h4>
+    <pre><code>import requests
+
+r = requests.get("https://api.maxlware.com/v1/com/notification")
+data = r.json()
+
+if data["actived"] == "true":
+    print("Notification :", data["message"])</code></pre>
+
+    <h4>Réponse attendue</h4>
+    <pre><code>{
+  "actived": "true",
+  "message": "Bienvenue sur Maxlware !",
+  "autor": "Maxlware",
+  "marker": "verified"
+}</code></pre>
+
+    <h2 id="step3">3. Routes protégées — Avec authentification</h2>
+    <p>Les routes admin nécessitent un Bearer token. Voici comment l'obtenir puis l'utiliser :</p>
+
+    <h4>Étape 1 — Login</h4>
+    <pre><code>const res = await fetch('https://api.maxlware.com/v1/auth/login', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ username: 'admin', password: '••••••' })
+});
+
+const { access_token } = await res.json();
+localStorage.setItem('token', access_token);</code></pre>
+
+    <h4>Étape 2 — Appel protégé</h4>
+    <pre><code>const token = localStorage.getItem('token');
+
+const res = await fetch('https://api.maxlware.com/v1/admin/contact/messages', {
+  headers: { 'Authorization': `Bearer ${token}` }
+});
+
+const messages = await res.json();
+console.log(messages);</code></pre>
+
+    <div class="callout callout-warn">
+      <div class="callout-title">⚠ CORS & Credentials</div>
+      Si tu utilises <code>credentials: 'include'</code>, ton origine doit être explicitement autorisée côté FastAPI. 
+      Utilise plutôt le header <code>Authorization: Bearer</code> qui ne requiert pas de configuration CORS spéciale pour les credentials.
+    </div>
+
+    <h2 id="step4">4. Intégrer la bannière de notification</h2>
+    <p>Voici comment reproduire le comportement du site principal pour afficher la bannière de notification :</p>
+
+    <pre><code>// 1. Vérifier si la notif a déjà été fermée dans les 24h
+function shouldShow() {
+  const last = localStorage.getItem('notifClosed');
+  if (!last) return true;
+  return (Date.now() - new Date(last)) > 86400000; // 24h en ms
+}
+
+// 2. Fetch et affichage conditionnel
+async function loadNotification() {
+  if (!shouldShow()) return;
+
+  const res = await fetch('https://api.maxlware.com/v1/com/notification');
+  const data = await res.json();
+
+  if (data.actived === "true") {
+    showBanner(data.message, data.marker);
+  }
+}
+
+// 3. Polling toutes les 5 minutes
+loadNotification();
+setInterval(loadNotification, 5 * 60 * 1000);</code></pre>
+
+    <h2>Et après ?</h2>
+    <div class="doc-cards">
+      <a class="doc-card" href="api.html">
+        <span class="doc-card-icon">#</span>
+        <div class="doc-card-title">Référence API complète</div>
+        <p class="doc-card-desc">Tous les endpoints avec leurs paramètres et réponses.</p>
+      </a>
+      <a class="doc-card" href="faq.html">
+        <span class="doc-card-icon">?</span>
+        <div class="doc-card-title">FAQ</div>
+        <p class="doc-card-desc">Problèmes courants et leurs solutions.</p>
+      </a>
+    </div>
+
+    <hr>
+    <p style="font-size:0.82rem; color: var(--muted2);">
+      <a href="https://maxlware.com/docs">← Retour à l'index</a> · Dernière mise à jour : 2026
+    </p>
+
+  </main>
+</div>
+
+</body>
+</html>
