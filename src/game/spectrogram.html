@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spectromètre — Maxlware</title>
+  <link rel="icon" href="https://maxlware.com/assets/logo.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #6e48aa;
+      --secondary: #9d50bb;
+      --accent: #4fc3f7;
+      --dark: #0e0e11;
+      --surface: #111217;
+      --surface2: #16161d;
+      --border: #1e1e28;
+      --border2: #2a2a38;
+      --light: #ffffff;
+      --muted: #666;
+      --mono: 'Syne Mono', monospace;
+      --sans: 'Syne', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--dark);
+      color: var(--light);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.5rem 1.5rem 3rem;
+    }
+
+    /* ── HEADER ── */
+    .header {
+      width: 100%;
+      max-width: 900px;
+      margin-bottom: 2rem;
+    }
+
+    .page-tag {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--secondary);
+      letter-spacing: 2px;
+      display: block;
+      margin-bottom: 0.35rem;
+      opacity: 0.8;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      font-weight: 800;
+      margin-bottom: 0.2rem;
+    }
+
+    .subtitle {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* ── DROP ZONE ── */
+    .drop-zone {
+      width: 100%;
+      max-width: 900px;
+      border: 2px dashed var(--border2);
+      border-radius: 10px;
+      padding: 2.2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+
+    .drop-zone:hover,
+    .drop-zone.dragover {
+      border-color: var(--primary);
+      background: rgba(110, 72, 170, 0.05);
+    }
+
+    .drop-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+
+    .drop-icon { font-size: 2rem; margin-bottom: 0.5rem; display: block; }
+
+    .drop-label {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 0.3rem;
+    }
+
+    .drop-hint {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+    }
+
+    /* ── PLAYER ── */
+    .player {
+      width: 100%;
+      max-width: 900px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.2rem 1.5rem;
+      margin-bottom: 1.2rem;
+      display: none;
+    }
+
+    .player.visible { display: block; }
+
+    .player-top {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .player-icon { font-size: 1.3rem; flex-shrink: 0; }
+
+    .player-info { flex: 1; min-width: 0; }
+
+    .player-filename {
+      font-size: 0.9rem;
+      font-weight: 700;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .player-meta {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .player-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+    }
+
+    .btn-play {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(110, 72, 170, 0.2);
+      border: 1px solid rgba(110, 72, 170, 0.4);
+      color: #c49ef5;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s;
+    }
+
+    .btn-play:hover { background: rgba(110, 72, 170, 0.4); color: var(--light); }
+
+    .progress-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 4px;
+      background: var(--border2);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      width: 0%;
+      transition: width 0.1s linear;
+      pointer-events: none;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .volume-wrap {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      flex-shrink: 0;
+    }
+
+    .volume-icon { font-size: 0.85rem; color: var(--muted); }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 70px;
+      height: 3px;
+      background: var(--border2);
+      border-radius: 3px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 12px;
+      height: 12px;
+      background: var(--secondary);
+      border-radius: 50%;
+    }
+
+    /* ── VIZ SELECTOR ── */
+    .viz-selector {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .viz-btn {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      padding: 0.35rem 0.85rem;
+      border-radius: 4px;
+      border: 1px solid var(--border2);
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .viz-btn:hover { color: var(--light); border-color: var(--border2); }
+    .viz-btn.active { background: rgba(110,72,170,0.15); border-color: rgba(110,72,170,0.4); color: #c49ef5; }
+
+    /* ── CANVAS ── */
+    .canvas-wrap {
+      width: 100%;
+      max-width: 900px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 300px;
+    }
+
+    .canvas-idle {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      pointer-events: none;
+    }
+
+    .canvas-idle-icon { font-size: 2rem; opacity: 0.15; }
+    .canvas-idle-text {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--muted);
+      opacity: 0.5;
+    }
+
+    /* ── FREQ LABELS ── */
+    .freq-labels {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      justify-content: space-between;
+      padding: 0.4rem 0.2rem 0;
+    }
+
+    .freq-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: #333;
+    }
+
+    /* ── STATS ── */
+    .stats-row {
+      width: 100%;
+      max-width: 900px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.7rem;
+      margin-top: 1.2rem;
+    }
+
+    .stat-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.8rem 1rem;
+      text-align: center;
+    }
+
+    .stat-label {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .stat-value {
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--light);
+    }
+
+    .stat-value span { color: var(--secondary); }
+
+    @media (max-width: 600px) {
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      canvas { height: 220px; }
+      .volume-wrap { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <span class="page-tag">// maxlware · audio</span>
+  <h1>Spectromètre<span style="color:var(--secondary)">_</span></h1>
+  <p class="subtitle">Visualiseur de spectre audio — MP3 / WAV</p>
+</div>
+
+<!-- DROP ZONE -->
+<div class="drop-zone" id="dropZone">
+  <input type="file" id="fileInput" accept=".mp3,.wav,audio/mpeg,audio/wav">
+  <span class="drop-icon">🎵</span>
+  <p class="drop-label">Glisse un fichier ici, ou clique pour sélectionner</p>
+  <p class="drop-hint">MP3 · WAV</p>
+</div>
+
+<!-- PLAYER -->
+<div class="player" id="player">
+  <div class="player-top">
+    <span class="player-icon">🎧</span>
+    <div class="player-info">
+      <div class="player-filename" id="playerFilename">—</div>
+      <div class="player-meta" id="playerMeta">—</div>
+    </div>
+  </div>
+  <div class="player-controls">
+    <button class="btn-play" id="btnPlay" onclick="togglePlay()">▶</button>
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar" onclick="seekAudio(event)">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <div class="time-row">
+        <span id="timeCurrent">0:00</span>
+        <span id="timeTotal">0:00</span>
+      </div>
+    </div>
+    <div class="volume-wrap">
+      <span class="volume-icon">🔊</span>
+      <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.8" oninput="setVolume(this.value)">
+    </div>
+  </div>
+</div>
+
+<!-- VIZ SELECTOR -->
+<div class="viz-selector" id="vizSelector" style="display:none;">
+  <button class="viz-btn active" onclick="setViz('bars', this)">Barres</button>
+  <button class="viz-btn" onclick="setViz('wave', this)">Onde</button>
+  <button class="viz-btn" onclick="setViz('mirror', this)">Miroir</button>
+  <button class="viz-btn" onclick="setViz('circle', this)">Cercle</button>
+</div>
+
+<!-- CANVAS -->
+<div class="canvas-wrap">
+  <canvas id="canvas"></canvas>
+  <div class="canvas-idle" id="canvasIdle">
+    <span class="canvas-idle-icon">📊</span>
+    <span class="canvas-idle-text">En attente d'un fichier audio...</span>
+  </div>
+</div>
+
+<!-- FREQ LABELS -->
+<div class="freq-labels" id="freqLabels" style="display:none;">
+  <span class="freq-label">20 Hz</span>
+  <span class="freq-label">100 Hz</span>
+  <span class="freq-label">500 Hz</span>
+  <span class="freq-label">2 kHz</span>
+  <span class="freq-label">8 kHz</span>
+  <span class="freq-label">20 kHz</span>
+</div>
+
+<!-- STATS -->
+<div class="stats-row" id="statsRow" style="display:none;">
+  <div class="stat-box">
+    <div class="stat-label">Fréq. dominante</div>
+    <div class="stat-value" id="statPeak">—</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Volume RMS</div>
+    <div class="stat-value" id="statRms">—</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Basses</div>
+    <div class="stat-value" id="statBass">—</div>
+  </div>
+  <div class="stat-box">
+    <div class="stat-label">Aigus</div>
+    <div class="stat-value" id="statHigh">—</div>
+  </div>
+</div>
+
+<script>
+  // ── Audio context & nodes ──
+  let audioCtx, analyser, source, gainNode;
+  let audioBuffer = null;
+  let isPlaying = false;
+  let startTime = 0;
+  let pauseOffset = 0;
+  let duration = 0;
+  let animId = null;
+  let vizMode = 'bars';
+  const FFT_SIZE = 2048;
+
+  // ── Canvas ──
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+
+  function resizeCanvas() {
+    const wrap = canvas.parentElement;
+    canvas.width = wrap.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+
+  // ── File input ──
+  const fileInput = document.getElementById('fileInput');
+  const dropZone = document.getElementById('dropZone');
+
+  fileInput.addEventListener('change', e => loadFile(e.target.files[0]));
+
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file) loadFile(file);
+  });
+
+  function loadFile(file) {
+    if (!file) return;
+    if (!file.type.startsWith('audio/')) {
+      alert('Format non supporté. Utilise un fichier MP3 ou WAV.');
+      return;
+    }
+
+    stopAudio();
+
+    // Setup audio context
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    analyser = audioCtx.createAnalyser();
+    analyser.fftSize = FFT_SIZE;
+    analyser.smoothingTimeConstant = 0.82;
+
+    gainNode = audioCtx.createGain();
+    gainNode.gain.value = parseFloat(document.getElementById('volumeSlider').value);
+
+    gainNode.connect(analyser);
+    analyser.connect(audioCtx.destination);
+
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try {
+        audioBuffer = await audioCtx.decodeAudioData(e.target.result);
+        duration = audioBuffer.duration;
+
+        // Update UI
+        document.getElementById('playerFilename').textContent = file.name;
+        document.getElementById('playerMeta').textContent =
+          `${(file.size / 1024 / 1024).toFixed(2)} MB · ${formatTime(duration)} · ${audioBuffer.sampleRate} Hz`;
+        document.getElementById('timeTotal').textContent = formatTime(duration);
+        document.getElementById('player').classList.add('visible');
+        document.getElementById('vizSelector').style.display = 'flex';
+        document.getElementById('freqLabels').style.display = 'flex';
+        document.getElementById('statsRow').style.display = 'grid';
+        document.getElementById('canvasIdle').style.display = 'none';
+
+        playAudio();
+      } catch(err) {
+        alert('Impossible de décoder le fichier audio.');
+        console.error(err);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+
+  // ── Playback ──
+  function playAudio() {
+    if (!audioBuffer) return;
+    source = audioCtx.createBufferSource();
+    source.buffer = audioBuffer;
+    source.connect(gainNode);
+    source.onended = () => {
+      if (isPlaying) { isPlaying = false; pauseOffset = 0; updatePlayBtn(); }
+    };
+    source.start(0, pauseOffset);
+    startTime = audioCtx.currentTime - pauseOffset;
+    isPlaying = true;
+    updatePlayBtn();
+    drawLoop();
+    updateProgress();
+  }
+
+  function stopAudio() {
+    if (source) { try { source.stop(); } catch(e) {} source = null; }
+    if (animId) { cancelAnimationFrame(animId); animId = null; }
+    isPlaying = false;
+    pauseOffset = 0;
+    updatePlayBtn();
+  }
+
+  function togglePlay() {
+    if (!audioBuffer) return;
+    if (isPlaying) {
+      pauseOffset = audioCtx.currentTime - startTime;
+      source.stop();
+      source = null;
+      isPlaying = false;
+      updatePlayBtn();
+    } else {
+      if (pauseOffset >= duration) pauseOffset = 0;
+      playAudio();
+    }
+  }
+
+  function seekAudio(e) {
+    if (!audioBuffer) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const ratio = (e.clientX - rect.left) / rect.width;
+    pauseOffset = ratio * duration;
+    if (isPlaying) { source.stop(); source = null; playAudio(); }
+    else { document.getElementById('progressFill').style.width = (ratio * 100) + '%'; }
+  }
+
+  function setVolume(v) {
+    if (gainNode) gainNode.gain.value = parseFloat(v);
+  }
+
+  function updatePlayBtn() {
+    document.getElementById('btnPlay').textContent = isPlaying ? '⏸' : '▶';
+  }
+
+  function updateProgress() {
+    if (!isPlaying) return;
+    const current = audioCtx.currentTime - startTime;
+    const pct = Math.min(current / duration, 1) * 100;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('timeCurrent').textContent = formatTime(current);
+    requestAnimationFrame(updateProgress);
+  }
+
+  function formatTime(s) {
+    s = Math.max(0, s);
+    const m = Math.floor(s / 60);
+    const sec = Math.floor(s % 60);
+    return `${m}:${sec.toString().padStart(2,'0')}`;
+  }
+
+  // ── Viz mode ──
+  function setViz(mode, btn) {
+    vizMode = mode;
+    document.querySelectorAll('.viz-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('freqLabels').style.display = (mode === 'wave' || mode === 'circle') ? 'none' : 'flex';
+  }
+
+  // ── Draw loop ──
+  function drawLoop() {
+    if (!analyser) return;
+    animId = requestAnimationFrame(drawLoop);
+
+    resizeCanvas();
+    const W = canvas.width, H = canvas.height;
+    const dataFreq = new Uint8Array(analyser.frequencyBinCount);
+    const dataTime = new Uint8Array(analyser.fftSize);
+    analyser.getByteFrequencyData(dataFreq);
+    analyser.getByteTimeDomainData(dataTime);
+
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#111217';
+    ctx.fillRect(0, 0, W, H);
+
+    if (vizMode === 'bars')   drawBars(dataFreq, W, H);
+    if (vizMode === 'wave')   drawWave(dataTime, W, H);
+    if (vizMode === 'mirror') drawMirror(dataFreq, W, H);
+    if (vizMode === 'circle') drawCircle(dataFreq, W, H);
+
+    updateStats(dataFreq);
+  }
+
+  function drawBars(data, W, H) {
+    const bins = Math.min(data.length, 128);
+    const barW = W / bins - 1;
+
+    for (let i = 0; i < bins; i++) {
+      const v = data[i] / 255;
+      const barH = v * H * 0.92;
+      const x = i * (barW + 1);
+      const hue = 200 + v * 80; // cyan → violet
+      const alpha = 0.5 + v * 0.5;
+
+      // Gradient bar
+      const grad = ctx.createLinearGradient(0, H, 0, H - barH);
+      grad.addColorStop(0, `hsla(${hue}, 80%, 55%, ${alpha})`);
+      grad.addColorStop(1, `hsla(${hue + 40}, 90%, 75%, ${alpha})`);
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x, H - barH, barW, barH, [2, 2, 0, 0]);
+      ctx.fill();
+
+      // Glow top
+      if (v > 0.05) {
+        ctx.fillStyle = `hsla(${hue + 40}, 100%, 85%, ${v * 0.6})`;
+        ctx.fillRect(x, H - barH - 2, barW, 2);
+      }
+    }
+  }
+
+  function drawWave(data, W, H) {
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#4fc3f7';
+    ctx.shadowColor = '#4fc3f7';
+    ctx.shadowBlur = 6;
+    ctx.beginPath();
+    const step = W / data.length;
+    for (let i = 0; i < data.length; i++) {
+      const y = (data[i] / 128 - 1) * (H * 0.45) + H / 2;
+      i === 0 ? ctx.moveTo(0, y) : ctx.lineTo(i * step, y);
+    }
+    ctx.stroke();
+    ctx.shadowBlur = 0;
+
+    // Center line
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(0, H / 2);
+    ctx.lineTo(W, H / 2);
+    ctx.stroke();
+  }
+
+  function drawMirror(data, W, H) {
+    const bins = Math.min(data.length, 128);
+    const barW = W / bins - 1;
+    const mid = H / 2;
+
+    for (let i = 0; i < bins; i++) {
+      const v = data[i] / 255;
+      const barH = v * mid * 0.92;
+      const x = i * (barW + 1);
+      const hue = 260 + v * 60;
+      const alpha = 0.4 + v * 0.6;
+
+      const grad = ctx.createLinearGradient(0, mid - barH, 0, mid + barH);
+      grad.addColorStop(0,   `hsla(${hue + 40}, 90%, 80%, ${alpha * 0.5})`);
+      grad.addColorStop(0.5, `hsla(${hue}, 80%, 60%, ${alpha})`);
+      grad.addColorStop(1,   `hsla(${hue + 40}, 90%, 80%, ${alpha * 0.5})`);
+
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.roundRect(x, mid - barH, barW, barH * 2, 2);
+      ctx.fill();
+    }
+  }
+
+  function drawCircle(data, W, H) {
+    const cx = W / 2, cy = H / 2;
+    const baseR = Math.min(W, H) * 0.22;
+    const bins = 128;
+
+    // Outer glow ring
+    ctx.strokeStyle = 'rgba(110,72,170,0.1)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+    ctx.stroke();
+
+    for (let i = 0; i < bins; i++) {
+      const v = data[i] / 255;
+      const angle = (i / bins) * Math.PI * 2 - Math.PI / 2;
+      const r = baseR + v * baseR * 0.9;
+      const hue = 200 + v * 100;
+
+      const x1 = cx + Math.cos(angle) * baseR;
+      const y1 = cy + Math.sin(angle) * baseR;
+      const x2 = cx + Math.cos(angle) * r;
+      const y2 = cy + Math.sin(angle) * r;
+
+      ctx.strokeStyle = `hsla(${hue}, 85%, 65%, ${0.5 + v * 0.5})`;
+      ctx.lineWidth = 1.5 + v * 2;
+      ctx.shadowColor = `hsla(${hue}, 100%, 70%, ${v})`;
+      ctx.shadowBlur = v * 8;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+    }
+    ctx.shadowBlur = 0;
+  }
+
+  // ── Stats ──
+  function updateStats(data) {
+    // Peak frequency
+    let maxVal = 0, maxIdx = 0;
+    for (let i = 0; i < data.length; i++) {
+      if (data[i] > maxVal) { maxVal = data[i]; maxIdx = i; }
+    }
+    const nyquist = audioCtx ? audioCtx.sampleRate / 2 : 22050;
+    const peakHz = Math.round((maxIdx / data.length) * nyquist);
+    document.getElementById('statPeak').innerHTML =
+      peakHz < 1000 ? `${peakHz} <span>Hz</span>` : `${(peakHz/1000).toFixed(1)} <span>kHz</span>`;
+
+    // RMS volume
+    let rms = 0;
+    for (let i = 0; i < data.length; i++) rms += (data[i] / 255) ** 2;
+    rms = Math.sqrt(rms / data.length);
+    document.getElementById('statRms').innerHTML = `${Math.round(rms * 100)} <span>%</span>`;
+
+    // Bass (0–250 Hz)
+    const bassEnd = Math.floor(250 / nyquist * data.length);
+    let bassSum = 0;
+    for (let i = 0; i < bassEnd; i++) bassSum += data[i];
+    const bassAvg = Math.round((bassSum / bassEnd) / 255 * 100);
+    document.getElementById('statBass').innerHTML = `${bassAvg} <span>%</span>`;
+
+    // Highs (4 kHz+)
+    const highStart = Math.floor(4000 / nyquist * data.length);
+    let highSum = 0, highCount = data.length - highStart;
+    for (let i = highStart; i < data.length; i++) highSum += data[i];
+    const highAvg = highCount > 0 ? Math.round((highSum / highCount) / 255 * 100) : 0;
+    document.getElementById('statHigh').innerHTML = `${highAvg} <span>%</span>`;
+  }
+</script>
+</body>
+</html>
