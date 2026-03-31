@@ -315,6 +315,94 @@
       min-height: 500px;
     }
 
+    .closed-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      padding: 1rem;
+    }
+
+    .closed-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .closed-overlay .modal {
+      background: var(--surface);
+      border: 1px solid #2a2a3a;
+      border-radius: 10px;
+      padding: 1.8rem;
+      max-width: 400px;
+      width: 100%;
+      transform: translateY(12px) scale(0.97);
+      transition: transform 0.2s;
+      box-shadow: 0 0 60px rgba(110,72,170,0.15);
+    }
+
+    .closed-overlay.show .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    .modal-icon {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+      display: block;
+    }
+
+    .modal-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 0.7rem;
+    }
+
+    .modal-body {
+      font-size: 0.85rem;
+      color: #aaa;
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal-body strong { color: var(--light); }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.7rem;
+    }
+
+    .btn {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      padding: 0.55rem 1rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: center;
+    }
+
+    .btn-cancel {
+      background: transparent;
+      color: var(--muted);
+    }
+    .btn-cancel:hover { background: rgba(255,255,255,0.05); color: var(--light); }
+
+    .btn-confirm {
+      background: rgba(110,72,170,0.15);
+      border-color: rgba(110,72,170,0.4);
+      color: #c49ef5;
+    }
+    .btn-confirm:hover { background: rgba(110,72,170,0.3); color: var(--light); }
+
     @media (max-width: 600px) {
       body { padding: 1rem; }
       .job-meta { flex-direction: column; gap: 0.2rem; }
@@ -338,14 +426,52 @@
       </div>
       <div class="job-arrow">→</div>
     </div>
+    <div class="job-item" data-tally="null">
+      <div class="job-icon">💻</div>
+      <div class="job-info">
+        <span class="job-title">Développeur Web</span>
+        <div class="job-meta"><span>💼 Bénévole</span></div>
+      </div>
+      <div class="job-arrow">→</div>
+    </div>
+    <div class="job-item" data-tally="null">
+      <div class="job-icon">🎬</div>
+      <div class="job-info">
+        <span class="job-title">Monteur vidéo</span>
+        <div class="job-meta"><span>💼 Bénévole</span></div>
+      </div>
+      <div class="job-arrow">→</div>
+    </div>
+    <div class="job-item" data-tally="null">
+      <div class="job-icon">🌐</div>
+      <div class="job-info">
+        <span class="job-title">Monteur vidéo</span>
+        <div class="job-meta"><span>💼 Bénévole</span></div>
+      </div>
+      <div class="job-arrow">→</div>
+    </div>
   </div>
   <div class="footer-note">Toutes les candidatures sont examinées avec soin. Nous vous répondons sous 7 jours.</div>
+</div>
+
+<div class="closed-overlay" id="closedOverlay" onclick="handleClosedOverlayClick(event)">
+  <div class="modal" id="closedModal">
+    <span class="modal-icon">🔒</span>
+    <div class="modal-title">Candidatures fermées</div>
+    <div class="modal-body">
+      Ce poste n'est <strong>pas ouvert aux candidatures</strong> pour le moment.<br><br>
+      Revenez plus tard ou consultez les autres postes disponibles.
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeClosedModal()">Fermer</button>
+    </div>
+  </div>
 </div>
 
 <div id="tallyModal" class="modal-overlay">
   <div class="tally-modal">
     <div class="modal-header">
-      <h3>Postuler via Tally</h3>
+      <h3>Postuler maintenant</h3>
       <button class="modal-close" id="closeTallyModal">&times;</button>
     </div>
     <div class="modal-content">
@@ -369,10 +495,22 @@
     if (e.target === modal) closeModal();
   });
 
+  const closedOverlay = document.getElementById('closedOverlay');
+
+  function closeClosedModal() {
+    closedOverlay.classList.remove('show');
+  }
+
+  function handleClosedOverlayClick(e) {
+    if (e.target === closedOverlay) closeClosedModal();
+  }
+
   document.querySelectorAll('.job-item').forEach(item => {
     item.addEventListener('click', () => {
       const tallyUrl = item.getAttribute('data-tally');
-      if (tallyUrl) {
+      if (!tallyUrl || tallyUrl === 'null') {
+        closedOverlay.classList.add('show');
+      } else {
         tallyIframe.src = tallyUrl;
         modal.classList.add('show');
       }
