@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acknowledgements - Maxlware</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --gold: #c9a96e;
+  --gold-dim: #7a6040;
+  --white: #f0ece4;
+  --muted: #4a4540;
+  --bg: #080706;
+}
+
+html, body {
+  height: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 100;
+  opacity: 0.5;
+}
+
+#top-mask, #bottom-mask {
+  position: fixed;
+  left: 0; right: 0;
+  height: 160px;
+  z-index: 50;
+  pointer-events: none;
+}
+#top-mask    { top: 0;    background: linear-gradient(to bottom, var(--bg) 20%, transparent); }
+#bottom-mask { bottom: 0; background: linear-gradient(to top,   var(--bg) 20%, transparent); }
+
+#track {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  overflow: hidden;
+}
+
+#credits {
+  position: absolute;
+  width: min(560px, 90vw);
+  text-align: center;
+  padding: 100vh 0 0;
+}
+
+.film-title {
+  font-family: 'Syne', sans-serif;
+  font-size: clamp(54px, 11vw, 84px);
+  justify-content: center;
+  font-weight: 800;
+  color: var(--white);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.film-tagline {
+  font-family: 'Syne Mono', monospace;
+  font-size: 10px;
+  justify-content: center;
+  letter-spacing: 0.55em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 70px;
+}
+
+.section { margin-bottom: 60px; }
+
+.section-heading {
+  font-family: 'Syne', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.45em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+}
+.section-heading::before,
+.section-heading::after {
+  content: '';
+  flex: 1;
+  max-width: 50px;
+  height: 0.5px;
+  background: var(--gold-dim);
+}
+
+.credit-group { margin-bottom: 26px; }
+
+.credit-role {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.28em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.credit-name {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 400;
+  color: var(--white);
+  letter-spacing: 0.06em;
+}
+.credit-name.featured {
+  font-size: 23px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.divider {
+  width: 1px;
+  height: 54px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dim), transparent);
+  margin: 0 auto 60px;
+}
+
+.ensemble {
+  font-family: 'Syne Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 2.4;
+  letter-spacing: 0.08em;
+}
+
+#end-cards {
+  padding: 80px 0 140px;
+  text-align: center;
+}
+
+.end-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.5em;
+  color: var(--gold-dim);
+  text-transform: uppercase;
+  margin-bottom: 32px;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 48px;
+}
+
+.card-link {
+  display: block;
+  position: relative;
+  overflow: hidden;
+  border-radius: 2px;
+  text-decoration: none;
+  transition: transform 0.3s ease;
+}
+.card-link:hover { transform: scale(1.03); }
+.card-link:hover .card-overlay { opacity: 1; }
+
+.card-link img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.card-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  display: flex;
+  align-items: flex-end;
+  padding: 10px;
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+
+.card-overlay-text {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.7);
+}
+
+.copyright {
+  font-family: 'Syne Mono', monospace;
+  font-size: 8px;
+  color: #222;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  line-height: 2.6;
+}
+
+#controls {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 150;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+#controls label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+#vol {
+  -webkit-appearance: none;
+  width: 72px;
+  height: 2px;
+  background: #2a2826;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+#vol::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--gold);
+  cursor: pointer;
+}
+
+#pause-btn {
+  font-family: 'Syne Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  background: transparent;
+  border: 0.5px solid #222;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s;
+}
+#pause-btn:hover { color: var(--white); border-color: var(--muted); }
+</style>
+</head>
+<body>
+
+<div id="top-mask"></div>
+<div id="bottom-mask"></div>
+
+<div id="track">
+  <div id="credits">
+
+    <p class="film-title" style="justify-content: center;">MXLW</p>
+    <p class="film-tagline">Maxlware.com si tu vois...</p>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <p class="section-heading">Création</p>
+      <div class="credit-group">
+        <p class="credit-role">Créateur</p>
+        <p class="credit-name featured">Maxlware</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Développeur</p>
+        <p class="credit-name">Maxlware</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Celui qui m'a quand même aidé</p>
+        <p class="credit-name">Claude by Anthropic</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <p class="section-heading">Languages de programmation</p>
+      <div class="credit-group">
+        <p class="credit-role">Structure</p>
+        <p class="credit-name featured">HTML</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Styles</p>
+        <p class="credit-name">CSS</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Scripts</p>
+        <p class="credit-name">JavaScript</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <p class="section-heading">Frameworks</p>
+      <div class="credit-group">
+        <p class="credit-role">Principal</p>
+        <p class="credit-name featured">Node.js</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Build</p>
+        <p class="credit-name featured">Vue.js</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Build 2</p>
+        <p class="credit-name">esbuild</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">API</p>
+        <p class="credit-name">FastAPI</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <p class="section-heading">Mentions honorables</p>
+      <div class="credit-group">
+        <p class="credit-role">ProtServer</p>
+        <p class="credit-name">Maxlware</p>
+        <p class="credit-name">Scratch by ScratchFondation and MIT</p>
+        <p class="credit-name">Turbowarp</p>
+        <p class="credit-name">Turbowarp packager</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Minecraft (Online version)</p>
+        <p class="credit-name">Eaglercraft</p>
+        <p class="credit-name">Mojang Studios</p>
+      </div>
+      <div class="credit-group">
+        <p class="credit-role">Images</p>
+        <p class="credit-name">Canva</p>
+        <p class="credit-name">Pinterest</p>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="section">
+      <p class="section-heading">Remerciements</p>
+      <p class="ensemble">
+        EletrixTime<br>
+        IptronDVT<br>
+        Cryptdev<br>
+        MaxlwareDVT
+      </p>
+    </div>
+
+    <div class="divider"></div>
+
+    <div id="end-cards">
+      <p class="end-label">Découvrir</p>
+      <div class="cards-grid">
+        <a class="card-link" href="index.html">
+          <img src="assets/anim1.gif" alt="Making of">
+          <div class="card-overlay"><span class="card-overlay-text">Ouvrir →</span></div>
+        </a>
+        <a class="card-link" href="index.html">
+          <img src="assets/anim2.gif" alt="Bande-annonce">
+          <div class="card-overlay"><span class="card-overlay-text">Ouvrir →</span></div>
+        </a>
+      </div>
+      <p class="copyright">
+        © 2025 — Tous droits réservés<br>
+        Le site est soumise à la RGPD et la DMCA.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<div id="controls">
+  <button id="pause-btn" onclick="togglePause()">Pause</button>
+  <label for="vol">Vol</label>
+  <input type="range" id="vol" min="0" max="1" step="0.01" value="0.42" oninput="setVolume(this.value)">
+</div>
+
+<script>
+let paused = false;
+let scrollY = 0;
+const speed = 0.55;
+const el = document.getElementById('credits');
+let raf;
+
+function tick() {
+  if (!paused) {
+    scrollY += speed;
+    el.style.transform = 'translateY(-' + scrollY + 'px)';
+    const max = el.scrollHeight - window.innerHeight;
+    if (scrollY >= max) { scrollY = max; return; }
+  }
+  raf = requestAnimationFrame(tick);
+}
+raf = requestAnimationFrame(tick);
+
+function togglePause() {
+  paused = !paused;
+  document.getElementById('pause-btn').textContent = paused ? 'Reprendre' : 'Pause';
+  if (!paused) {
+    raf = requestAnimationFrame(tick);
+    if (ctx && ctx.state === 'suspended') ctx.resume();
+  } else {
+    if (ctx) ctx.suspend();
+  }
+}
+
+let ctx, master;
+
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    ctx = new (window.AudioContext || window.webkitAudioContext)();
+    master = ctx.createGain();
+    master.gain.value = 0.42;
+    master.connect(ctx.destination);
+    loop();
+  } catch(e) {}
+});
+
+function loop() {
+  const dur = phrase();
+  setTimeout(() => { if (!paused) loop(); }, (dur - 0.4) * 1000);
+}
+
+function phrase() {
+  const t = ctx.currentTime;
+  const mel = [
+    [261.63,0.0,1.8],[293.66,1.8,1.2],[329.63,3.0,2.4],
+    [293.66,5.4,1.2],[261.63,6.6,2.8],[220.00,9.4,2.0],
+    [246.94,11.4,1.4],[261.63,12.8,3.6],[293.66,16.4,1.4],
+    [329.63,17.8,1.4],[392.00,19.2,2.8],[349.23,22.0,1.4],
+    [329.63,23.4,1.4],[293.66,24.8,3.6],[261.63,28.4,1.4],
+    [246.94,29.8,1.4],[220.00,31.2,2.2],[196.00,33.4,2.2],
+    [220.00,35.6,1.4],[261.63,37.0,5.0],
+  ];
+  const pads = [
+    [130.81,0,12],[164.81,0,12],[196.00,0,12],
+    [130.81,12,12],[155.56,12,12],[185.00,12,12],
+    [130.81,24,18],[164.81,24,18],[196.00,24,18],
+  ];
+  const bass = [
+    [65.41,0,6],[65.41,6,6],[73.42,12,6],[73.42,18,6],
+    [65.41,24,6],[65.41,30,6],[55.00,36,6],
+  ];
+  mel.forEach(([f,s,d])  => note('sine',     f, t+s, d, 0.13, 0.07));
+  pads.forEach(([f,s,d]) => note('triangle', f, t+s, d, 0.04, 1.0));
+  bass.forEach(([f,s,d]) => note('sine',     f, t+s, d, 0.20, 0.07));
+  return 42;
+}
+
+function note(type, freq, start, dur, amp, atk) {
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.type = type; o.frequency.value = freq;
+  g.gain.setValueAtTime(0, start);
+  g.gain.linearRampToValueAtTime(amp, start + atk);
+  g.gain.setValueAtTime(amp, start + dur - Math.min(1.0, dur * 0.25));
+  g.gain.linearRampToValueAtTime(0, start + dur);
+  o.connect(g); g.connect(master);
+  o.start(start); o.stop(start + dur + 0.1);
+}
+
+function setVolume(v) { if (master) master.gain.value = parseFloat(v); }
+</script>
+</body>
+</html>
