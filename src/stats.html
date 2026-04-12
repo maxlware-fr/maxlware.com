@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Stats - Maxlware</title>
+<link rel="icon" href="assets/logo.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg:#222222; --surface:#0d0d0d; --border:#383838;
+    --green:#4caf50; --red:#f44336; --yellow:#ff9800;
+    --blue:#2196f3; --cyan:#00bcd4; --pink:#e91e63;
+    --text:#e0e0e0; --muted:#9e9e9e; --white:#ffffff;
+  }
+  body { background:var(--bg); color:var(--text); font-family:'Open Sans',sans-serif; font-size:14px; min-height:100vh; }
+  a { color:var(--cyan); text-decoration:underline; } a:hover { color:var(--white); }
+
+  .hero {
+    position:relative; min-height:220px;
+    background: linear-gradient(to bottom,rgba(10,10,20,.45) 0%,rgba(10,10,20,.88) 100%),
+                url('assets/anim1.gif') center/cover no-repeat;
+    display:flex; align-items:flex-end; padding:2rem 2.5rem;
+  }
+  .hero h1 { font-family:'Roboto',sans-serif; font-size:2.4rem; font-weight:700; color:var(--white); margin-bottom:.6rem; text-shadow:0 2px 8px rgba(0,0,0,.6); }
+  .hero p { color:#ccc; font-size:.92rem; line-height:1.6; max-width:700px; }
+
+  .nav-tabs { background:#323232; border-bottom:1px solid var(--border); display:flex; padding:0 2.5rem; }
+  .nav-tab { padding:.85rem 1.4rem; font-size:.85rem; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:3px solid transparent; transition:color .2s,border-color .2s; user-select:none; }
+  .nav-tab:hover { color:var(--text); }
+  .nav-tab.active { color:var(--white); border-bottom-color:var(--cyan); }
+
+  .stats-bar { background:#323232; border-bottom:1px solid var(--border); padding:1.2rem 2.5rem; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem; }
+  .stat-group { display:flex; gap:2.5rem; flex-wrap:wrap; align-items:center; }
+  .stat-big { display:flex; align-items:baseline; gap:.5rem; }
+  .stat-big .num { font-size:2rem; font-weight:700; color:var(--white); font-family:'Roboto',sans-serif; }
+  .stat-big .lbl { font-size:.85rem; color:var(--muted); }
+  .live-dot { display:inline-flex; align-items:center; gap:.4rem; font-size:.78rem; color:var(--green); font-weight:600; }
+  .live-dot::before { content:''; width:7px; height:7px; border-radius:50%; background:var(--green); animation:blink 1.4s ease infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+  .container { max-width:1300px; margin:0 auto; padding:1.5rem 2.5rem; }
+  .tab-content { display:none; } .tab-content.active { display:block; }
+
+  .section-head { font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); margin:1.75rem 0 .75rem; padding-bottom:.5rem; border-bottom:1px solid var(--border); }
+
+  .cards-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:1rem; margin-bottom:1rem; }
+
+  .monitor-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; overflow:hidden; }
+  .monitor-card-header { padding:.8rem 1rem .6rem; border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; }
+  .monitor-card-name { font-weight:700; font-size:1rem; }
+  .monitor-card-type { font-size:.78rem; color:var(--muted); margin-left:.3rem; }
+  .progress-bar { height:6px; background:#222240; }
+  .progress-fill { height:100%; transition:width .6s ease; }
+  .monitor-entries { padding:.25rem 0; }
+  .monitor-entry { display:flex; align-items:center; justify-content:space-between; padding:.55rem 1rem; border-bottom:1px solid rgba(255,255,255,.04); font-size:.85rem; }
+  .monitor-entry:last-child { border-bottom:none; }
+  .monitor-entry:hover { background:rgba(255,255,255,.03); }
+  .entry-status { display:flex; align-items:center; gap:.5rem; white-space:nowrap; }
+  .status-label { font-weight:600; }
+  .status-label.up    { color:var(--green); }
+  .status-label.down  { color:var(--red); }
+  .status-label.pause { color:var(--yellow); }
+  .status-label.unknown { color:var(--muted); }
+  .entry-count { color:var(--muted); font-size:.82rem; }
+
+  .chart-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:1rem 1.25rem; margin-bottom:1rem; }
+  .chart-card-title { font-size:.78rem; font-weight:700; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:.75rem; }
+  .chart-wrap { position:relative; height:180px; }
+
+  .mc-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:1rem; }
+  .mc-card-header { padding:.8rem 1rem; border-bottom:1px solid var(--border); display:flex; align-items:center; gap:.75rem; }
+  .mc-icon { width:40px; height:40px; border-radius:4px; image-rendering:pixelated; background:var(--border); }
+  .mc-server-name { font-weight:700; font-size:1rem; color:var(--cyan); }
+  .mc-server-ver { font-size:.75rem; color:var(--muted); margin-top:.1rem; }
+  .mc-progress-bar { height:6px; background:#222240; }
+  .mc-progress-fill { height:100%; background:var(--cyan); transition:width .6s; }
+  .mc-entries { padding:.25rem 0; }
+  .mc-entry { display:flex; align-items:center; justify-content:space-between; padding:.5rem 1rem; border-bottom:1px solid rgba(255,255,255,.04); font-size:.85rem; }
+  .mc-entry:last-child { border-bottom:none; }
+  .mc-player-list { padding:.5rem 1rem 1rem; display:flex; flex-wrap:wrap; gap:.4rem; }
+  .mc-player-chip { background:rgba(0,188,212,.1); border:1px solid rgba(0,188,212,.25); border-radius:3px; padding:.2rem .55rem; font-size:.75rem; font-family:'Roboto',monospace; color:var(--cyan); display:flex; align-items:center; gap:.35rem; }
+  .mc-player-head { width:16px; height:16px; border-radius:2px; image-rendering:pixelated; }
+
+  .visits-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; margin-bottom:1rem; }
+  .visits-kpi { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:1rem 1.25rem; }
+  .visits-kpi-lbl { font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin-bottom:.35rem; }
+  .visits-kpi-num { font-size:1.8rem; font-weight:700; color:var(--white); font-family:'Roboto',sans-serif; }
+
+  .update-list { display:flex; flex-direction:column; gap:.5rem; }
+  .update-item { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:.9rem 1.25rem; display:flex; gap:1rem; align-items:flex-start; }
+  .update-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:.45rem; }
+  .update-dot.feature     { background:var(--green); }
+  .update-dot.fix         { background:var(--red); }
+  .update-dot.maintenance { background:var(--yellow); }
+  .update-dot.security    { background:var(--pink); }
+  .update-title { font-size:.9rem; font-weight:700; margin-bottom:.15rem; color:var(--white); }
+  .update-desc  { font-size:.82rem; color:var(--muted); line-height:1.5; }
+  .update-meta  { font-size:.7rem; color:var(--muted); margin-top:.3rem; }
+  .update-service { color:var(--cyan); }
+  .update-badge { font-size:.65rem; font-weight:700; padding:.15rem .45rem; border-radius:3px; text-transform:uppercase; letter-spacing:.04em; margin-left:.4rem; }
+  .update-badge.feature     { background:rgba(76,175,80,.2);  color:var(--green); }
+  .update-badge.fix         { background:rgba(244,67,54,.2);   color:var(--red); }
+  .update-badge.maintenance { background:rgba(255,152,0,.2);   color:var(--yellow); }
+  .update-badge.security    { background:rgba(233,30,99,.2);   color:var(--pink); }
+
+  .skeleton { background:linear-gradient(90deg,var(--border) 25%,#2a2a5a 50%,var(--border) 75%); background-size:200%; animation:shimmer 1.4s infinite; border-radius:3px; }
+  @keyframes shimmer { 0%{background-position:200%} 100%{background-position:-200%} }
+  .sk { height:13px; margin:.6rem 1rem; }
+
+  footer { text-align:center; padding:1.5rem; color:var(--muted); font-size:.75rem; border-top:1px solid var(--border); margin-top:2rem; }
+  @media(max-width:640px) { .hero{min-height:160px;padding:1.25rem} .hero h1{font-size:1.5rem} .container{padding:1rem} .stats-bar{padding:1rem} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div>
+    <h1>Maxlware Stats</h1>
+    <p>Outil de statistiques en temps réel pour les services Maxlware.<br/>Monitors, serveur Minecraft, visites et mises à jour. Tout en un seul endroit.</p>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <div class="nav-tab active" onclick="switchTab('overview')">Vue d'ensemble</div>
+  <div class="nav-tab" onclick="switchTab('monitors')">Moniteurs</div>
+  <div class="nav-tab" onclick="switchTab('minecraft')">Minecraft</div>
+  <div class="nav-tab" onclick="switchTab('visits')">Visites</div>
+  <div class="nav-tab" onclick="switchTab('updates')">Mises à jour</div>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-group">
+    <div class="stat-big"><span class="num" id="kpiOnline">–</span><span class="lbl">moniteurs en ligne</span></div>
+    <div class="stat-big"><span class="num" id="kpiAvg">–</span><span class="lbl">ms réponse moy.</span></div>
+    <div class="stat-big"><span class="num" id="kpiMc">–</span><span class="lbl">joueurs Minecraft</span></div>
+    <div class="stat-big"><span class="num" id="kpiVisits">–</span><span class="lbl">visites totales</span></div>
+  </div>
+  <div style="display:flex;align-items:center;gap:1.25rem;">
+    <span class="live-dot">EN DIRECT</span>
+    <span style="font-size:.75rem;color:var(--muted)" id="lastUpdate">–</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="tab-content active" id="tab-overview">
+    <div class="section-head">Moniteurs de services</div>
+    <div class="cards-grid" id="overviewMonitors"><div class="monitor-card"><div class="sk skeleton" style="height:40px;margin:0"></div><div class="sk skeleton"></div><div class="sk skeleton"></div></div></div>
+    <div class="section-head">Serveur Minecraft — play.maxlware.com</div>
+    <div id="overviewMc"><div class="monitor-card"><div class="sk skeleton" style="height:40px;margin:0"></div><div class="sk skeleton"></div><div class="sk skeleton"></div></div></div>
+    <div class="section-head">Dernières mises à jour</div>
+    <div class="update-list" id="overviewUpdates"><div class="update-item"><div class="sk skeleton" style="width:100%;height:50px;margin:0"></div></div></div>
+  </div>
+
+  <div class="tab-content" id="tab-monitors">
+    <div class="section-head">Statut des moniteurs</div>
+    <div class="cards-grid" id="monitorsGrid"><div class="monitor-card"><div class="sk skeleton" style="height:40px;margin:0"></div><div class="sk skeleton"></div></div></div>
+    <div class="section-head">Temps de réponse (24h)</div>
+    <div class="chart-card">
+      <div class="chart-card-title">Historique des temps de réponse</div>
+      <div class="chart-wrap"><canvas id="responseChart"></canvas></div>
+    </div>
+  </div>
+
+  <div class="tab-content" id="tab-minecraft">
+    <div class="section-head">Serveur Java</div><div id="mcJava"></div>
+    <div class="section-head">Serveur Bedrock</div><div id="mcBedrock"></div>
+  </div>
+
+  <div class="tab-content" id="tab-visits">
+    <div class="section-head">Vue globale</div>
+    <div class="visits-grid" id="visitsKpi"></div>
+    <div class="chart-card"><div class="chart-card-title">Visites — 30 derniers jours</div><div class="chart-wrap"><canvas id="visitsChart"></canvas></div></div>
+    <div class="section-head">Par site</div>
+    <div class="visits-grid" id="visitsSites"></div>
+  </div>
+
+  <div class="tab-content" id="tab-updates">
+    <div class="section-head">Historique des mises à jour</div>
+    <div class="update-list" id="updatesList"><div class="update-item"><div class="sk skeleton" style="width:100%;height:50px;margin:0"></div></div></div>
+  </div>
+
+</div>
+
+<footer>Maxlware Stats — actualisé toutes les 60s &middot; <a href="https://betterstack.com" target="_blank">BetterStack</a> &amp; <a href="https://mcsrvstat.us" target="_blank">mcsrvstat.us</a></footer>
+
+<script>
+const API='https://api.maxlware.com'; const $=id=>document.getElementById(id); const fmt=n=>typeof n==='number'?n.toLocaleString('fr-FR'):'–';
+const COLORS=['#4caf50','#2196f3','#e91e63','#ff9800','#9c27b0','#00bcd4','#ff5722'];
+
+function switchTab(name){
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>{const tabs=['overview','monitors','minecraft','visits','updates'];t.classList.toggle('active',tabs[i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  $(`tab-${name}`).classList.add('active');
+}
+
+function statusLabel(is_online,status){
+  const s=status||(is_online?'up':'down');
+  const map={up:['up','En ligne'],down:['down','Hors ligne'],paused:['pause','En pause'],unknown:['unknown','Inconnu']};
+  const[cls,txt]=map[s]||['unknown',s];
+  return`<span class="status-label ${cls}">${txt}</span>`;
+}
+
+function buildGroupCard(monitors,respData){
+  const online=monitors.filter(m=>m.is_online).length,total=monitors.length,pct=total?Math.round(online/total*100):0;
+  const entries=monitors.map(m=>{const resp=respData?.[m.id],ms=resp?.last_response_ms?`(${resp.last_response_ms} ms)`:'';return`<div class="monitor-entry"><span class="entry-name">${m.name}</span><span class="entry-status">${statusLabel(m.is_online,m.status)}<span class="entry-count">${ms}</span></span></div>`;}).join('');
+  return`<div class="monitor-card"><div class="monitor-card-header"><div><span class="monitor-card-name" style="color:#4caf50">Services Maxlware</span><span class="monitor-card-type">(${online}/${total} en ligne)</span></div></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%;background:#4caf50"></div></div><div class="monitor-entries">${entries}</div></div>`;
+}
+
+function buildMonitorCards(monitors,respData){
+  return monitors.map((m,i)=>{
+    const color=COLORS[i%COLORS.length],resp=respData?.[m.id],ms=resp?.last_response_ms?`${resp.last_response_ms} ms`:'–',avms=resp?.avg_response_ms?`moy. ${resp.avg_response_ms} ms`:'';
+    return`<div class="monitor-card"><div class="monitor-card-header"><div><span class="monitor-card-name" style="color:${color}">${m.name}</span></div>${statusLabel(m.is_online,m.status)}</div><div class="progress-bar"><div class="progress-fill" style="width:${m.is_online?100:0}%;background:${color}"></div></div><div class="monitor-entries"><div class="monitor-entry"><span>URL</span><span class="entry-count">${m.url||'–'}</span></div><div class="monitor-entry"><span>Dernier temps de réponse</span><span class="entry-count">${ms}</span></div>${avms?`<div class="monitor-entry"><span>Moyenne 24h</span><span class="entry-count">${avms}</span></div>`:''}</div></div>`;
+  }).join('');
+}
+
+function buildMcCard(data,edition){
+  if(!data?.online)return`<div class="mc-card"><div class="mc-card-header"><div><div class="mc-server-name">play.maxlware.com</div><div class="mc-server-ver">${edition} — Hors ligne</div></div></div><div class="mc-progress-bar"><div class="mc-progress-fill" style="width:0"></div></div><div class="mc-entries"><div class="mc-entry"><span>Statut</span><span class="status-label down">Hors ligne</span></div></div></div>`;
+  const onl=data.players?.online??0,max=data.players?.max??0,pct=max?Math.round(onl/max*100):0;
+  const motd=(data.motd?.clean||[]).join(' ').replace(/§./g,'');
+  const playerItems=(data.players?.list||[]).slice(0,20).map(p=>{const name=typeof p==='string'?p:p.name||'?',uuid=typeof p==='object'?p.uuid:'',head=uuid?`<img class="mc-player-head" src="https://mc-heads.net/avatar/${uuid}/16" alt=""/>`:'';return`<div class="mc-player-chip">${head}${name}</div>`;}).join('');
+  return`<div class="mc-card"><div class="mc-card-header">${data.icon?`<img class="mc-icon" src="${data.icon}" alt="icon"/>`:''}<div><div class="mc-server-name">play.maxlware.com</div><div class="mc-server-ver">${edition} ${data.version?'— '+data.version:''} ${data.software?'('+data.software+')':''}</div></div></div>${motd?`<div style="padding:.5rem 1rem;font-size:.82rem;color:var(--muted);border-bottom:1px solid var(--border)">${motd}</div>`:''}<div class="mc-progress-bar"><div class="mc-progress-fill" style="width:${pct}%"></div></div><div class="mc-entries"><div class="mc-entry"><span>Joueurs</span><span style="color:var(--cyan);font-weight:700">${onl} / ${max}</span></div><div class="mc-entry"><span>Statut</span>${statusLabel(true,'up')}</div>${data.map?`<div class="mc-entry"><span>Carte</span><span style="color:var(--muted)">${data.map}</span></div>`:''} ${data.gamemode?`<div class="mc-entry"><span>Mode</span><span style="color:var(--muted)">${data.gamemode}</span></div>`:''} ${data.plugins?.length?`<div class="mc-entry"><span>Plugins</span><span style="color:var(--muted)">${data.plugins.length}</span></div>`:''}</div>${playerItems?`<div class="mc-player-list">${playerItems}</div>`:''}</div>`;
+}
+
+function buildUpdate(u){
+  const type=u.type||'feature',date=new Date(u.date).toLocaleDateString('fr-FR',{day:'2-digit',month:'short',year:'numeric'});
+  return`<div class="update-item"><div class="update-dot ${type}"></div><div style="flex:1"><div class="update-title">${u.title}<span class="update-badge ${type}">${type}</span>${u.version?`<span style="font-size:.72rem;color:var(--cyan);font-weight:600;margin-left:.3rem">v${u.version}</span>`:''}</div><div class="update-desc">${u.description}</div><div class="update-meta"><span class="update-service">${u.service}</span> &middot; ${date}</div></div></div>`;
+}
+
+let responseChart,visitsChart;
+const chartOpts={responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{color:'#9e9e9e',font:{family:'Open Sans',size:11},boxWidth:12}}},scales:{x:{display:false},y:{grid:{color:'rgba(255,255,255,.06)'},ticks:{color:'#9e9e9e',font:{family:'Roboto',size:10}}}}};
+
+function buildResponseChart(datasets){
+  const ctx=$('responseChart').getContext('2d');
+  if(responseChart)responseChart.destroy();
+  responseChart=new Chart(ctx,{type:'line',data:{labels:datasets[0]?.data.map((_,i)=>i)||[],datasets:datasets.map((ds,i)=>({label:ds.name,data:ds.data,borderColor:COLORS[i%COLORS.length],backgroundColor:COLORS[i%COLORS.length]+'22',borderWidth:2,tension:.4,pointRadius:0,fill:true}))},options:chartOpts});
+}
+
+function buildVisitsChart(byDate){
+  const sorted=Object.entries(byDate).sort((a,b)=>a[0].localeCompare(b[0])).slice(-30);
+  const ctx=$('visitsChart').getContext('2d');
+  if(visitsChart)visitsChart.destroy();
+  visitsChart=new Chart(ctx,{type:'bar',data:{labels:sorted.map(([d])=>d.slice(5)),datasets:[{label:'Visites',data:sorted.map(([,v])=>v),backgroundColor:'#2196f355',borderColor:'#2196f3',borderWidth:1,borderRadius:3}]},options:{...chartOpts,plugins:{legend:{display:false}}}});
+}
+
+async function loadMonitors(){
+  try{
+    const[onRes,respRes]=await Promise.all([fetch(`${API}/v1/stats/monitors/online`).then(r=>r.json()),fetch(`${API}/v1/stats/monitors/response`).then(r=>r.json())]);
+    const monitors=Object.values(onRes.monitors||{}),respData=respRes.data||{},s=onRes.summary||{};
+    $('kpiOnline').textContent=`${s.online||0}/${s.total||0}`;
+    const avgs=Object.values(respData).map(m=>m.avg_response_ms).filter(Boolean);
+    $('kpiAvg').textContent=avgs.length?Math.round(avgs.reduce((a,b)=>a+b,0)/avgs.length):'–';
+    $('overviewMonitors').innerHTML=buildGroupCard(monitors,respData);
+    $('monitorsGrid').innerHTML=buildMonitorCards(monitors,respData);
+    const datasets=Object.values(respData).slice(0,6).map(m=>({name:m.name,data:(m.history||[]).slice(-40).map(h=>h.response_time||0)})).filter(ds=>ds.data.some(v=>v>0));
+    if(datasets.length)buildResponseChart(datasets);
+  }catch(e){$('overviewMonitors').innerHTML=`<div style="color:var(--red);padding:1rem;font-size:.82rem">Erreur: ${e.message}</div>`;}
+}
+
+async function loadMinecraft(){
+  try{
+    const mc=await fetch(`${API}/v1/stats/minecraft`).then(r=>r.json());
+    $('kpiMc').textContent=mc.total_players_online??'–';
+    $('overviewMc').innerHTML=buildMcCard(mc.java,'Java');
+    $('mcJava').innerHTML=buildMcCard(mc.java,'Java');
+    $('mcBedrock').innerHTML=buildMcCard(mc.bedrock,'Bedrock');
+  }catch(e){$('overviewMc').innerHTML=`<div style="color:var(--red);padding:1rem;font-size:.82rem">Erreur Minecraft: ${e.message}</div>`;}
+}
+
+async function loadVisits(){
+  try{
+    const[gRes,sRes]=await Promise.all([fetch(`${API}/v1/stats/visits/view/global`).then(r=>r.json()),fetch(`${API}/v1/stats/visits/view/site`).then(r=>r.json())]);
+    const total=gRes.global?.total||0;
+    $('kpiVisits').textContent=fmt(total);
+    $('visitsKpi').innerHTML=`<div class="visits-kpi"><div class="visits-kpi-lbl">Total global</div><div class="visits-kpi-num">${fmt(total)}</div></div>`;
+    const sites=Object.entries(sRes.sites||{});
+    $('visitsSites').innerHTML=sites.map(([n,s])=>`<div class="visits-kpi"><div class="visits-kpi-lbl">${n}</div><div class="visits-kpi-num">${fmt(s.total)}</div></div>`).join('')||'<div style="color:var(--muted);padding:1rem;font-size:.82rem">Aucune donnée.</div>';
+    if(gRes.global?.by_date)buildVisitsChart(gRes.global.by_date);
+  }catch(e){}
+}
+
+async function loadUpdates(){
+  try{
+    const{updates}=await fetch(`${API}/v1/stats/updates`).then(r=>r.json());
+    const html=updates?.length?updates.slice(0,10).map(buildUpdate).join(''):'<div style="color:var(--muted);padding:1rem;font-size:.82rem">Aucune mise à jour.</div>';
+    $('overviewUpdates').innerHTML=html; $('updatesList').innerHTML=html;
+  }catch(e){$('updatesList').innerHTML=`<div style="color:var(--red);padding:1rem;font-size:.82rem">Erreur: ${e.message}</div>`;}
+}
+
+async function refresh(){
+  $('lastUpdate').textContent='Actualisation…';
+  await Promise.all([loadMonitors(),loadMinecraft(),loadVisits(),loadUpdates()]);
+  $('lastUpdate').textContent='Mis à jour à '+new Date().toLocaleTimeString('fr-FR');
+}
+refresh();
+setInterval(refresh,60000);
+</script>
+</body>
+</html>
