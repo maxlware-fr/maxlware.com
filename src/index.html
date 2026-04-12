@@ -74,6 +74,8 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     if (loadingOverlay) {
       loadingOverlay.style.display = 'block';
     }
+    fetch('/v1/stats/visits/global', { method: 'POST' });
+    fetch('/v1/stats/visits/site?site=maxlware.com', { method: 'POST' });
 
     try {
       const params = new URLSearchParams(window.location.search);
