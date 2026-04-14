@@ -84,6 +84,15 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       margin-bottom: 1rem;
       border-bottom: 1px solid #333;
       padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .title-logo {
+      height: 2.5rem;
+      width: auto;
+      object-fit: contain;
     }
 
     .subtitle {
