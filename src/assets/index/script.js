@@ -182,8 +182,49 @@ function initNotification() {
 
 document.addEventListener('DOMContentLoaded', initNotification);
 
-setInterval(() => {
-    if (shouldShowNotification()) {
-        fetchAndDisplayNotification();
-    }
-}, 300000);
+
+
+
+async function fetchWeather() {
+  const widget = document.getElementById('weather-widget');
+  if (!widget) return;
+
+  try {
+    const geoRes = await fetch('https://api.maxlware.com/v1/com/geo');
+    if (!geoRes.ok) throw new Error('Géolocalisation échouée');
+    const geoData = await geoRes.json();
+
+    const rawCity = geoData.city || 'Paris';
+    const city = rawCity.replace(/\s+/g, '-');
+
+    const meteoRes = await fetch(`https://api.maxlware.com/v1/com/meteo?city=${encodeURIComponent(city)}`);
+    if (!meteoRes.ok) throw new Error('API météo indisponible');
+    const meteo = await meteoRes.json();
+
+    const iconMap = {
+      soleil: 'assets/soleil.png',
+      nuage:  'assets/nuage.png',
+      pluie:  'assets/pluie.png',
+    };
+    const iconSrc = iconMap[meteo.weather_category] || 'assets/nuage.png';
+
+    widget.innerHTML = `
+      <div class="weather-content">
+        <div class="weather-top">
+          <img class="weather-icon" src="${iconSrc}" alt="${meteo.weather_category}">
+          <div>
+            <div class="weather-temp">${Math.round(meteo.temperature)}<span>°C</span></div>
+            <div class="weather-cat">${meteo.weather_category}</div>
+          </div>
+        </div>
+        <div class="weather-city">📍 ${meteo.city}, ${meteo.country}</div>
+        <div class="weather-source">${meteo.source}</div>
+      </div>
+    `;
+  } catch (err) {
+    console.warn('Météo non disponible :', err.message);
+    widget.innerHTML = `<div class="weather-error">Météo indisponible</div>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchWeather);
