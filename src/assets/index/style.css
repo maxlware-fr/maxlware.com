@@ -386,70 +386,22 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
   flex-shrink: 0;
 }
 
+
 .apropos-content {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1.6fr;
   gap: 3rem;
   align-items: start;
 }
 
-.apropos-terminal {
-  background: #0a0a0d;
-  border: 1px solid #222;
+.apropos-photo {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
   border-radius: 6px;
-  overflow: hidden;
-  font-family: 'Syne Mono', monospace;
-  font-size: 0.88rem;
-}
-
-.terminal-bar {
-  background: #1a1a22;
-  padding: 0.5rem 0.8rem;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  border-bottom: 1px solid #222;
-}
-
-.t-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-.t-dot.red    { background: #ff5f57; }
-.t-dot.orange { background: #ffbd2e; }
-.t-dot.green  { background: #28c841; }
-
-.t-title {
-  margin-left: 0.6rem;
-  color: #555;
-  font-size: 0.78rem;
-}
-
-.terminal-body {
-  padding: 1rem 1.2rem;
-  line-height: 1.8;
-}
-
-.terminal-body p {
-  margin: 0;
-}
-
-.t-prompt {
-  color: var(--primary);
-}
-
-.t-cmd {
-  color: #4fc3f7;
-}
-
-.t-out {
-  color: #888;
-  padding-left: 1rem;
-}
-
-.t-cursor {
-  margin-top: 0.3rem;
+  border: 1px solid #222;
+  display: block;
+  background: #13131a;
 }
 
 .apropos-text {
@@ -487,8 +439,168 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
   text-decoration: none;
 }
 
+
+.activite-content {
+  min-height: 80px;
+}
+
+.activite-loading,
+.activite-error {
+  color: #555;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.85rem;
+}
+
+.activite-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+.activite-time-card {
+  background: #13131a;
+  border: 1px solid #222;
+  border-radius: 6px;
+  padding: 1.6rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  transition: border-color 0.2s ease;
+}
+
+.activite-time-card:hover {
+  border-color: #333;
+}
+
+.activite-time-top {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.activite-daynight-icon {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  image-rendering: pixelated;
+  flex-shrink: 0;
+}
+
+.activite-time-value {
+  font-family: 'Syne Mono', monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--light);
+  line-height: 1;
+  letter-spacing: 2px;
+}
+
+.activite-date-value {
+  font-size: 0.82rem;
+  color: #666;
+  margin-top: 0.3rem;
+  text-transform: capitalize;
+}
+
+.activite-timezone {
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.72rem;
+  color: #444;
+  letter-spacing: 1px;
+}
+
+.activite-app-card {
+  background: #13131a;
+  border: 1px solid #222;
+  border-radius: 6px;
+  padding: 1.6rem 1.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.activite-app-card:hover {
+  border-color: #333;
+}
+
+.activite-app-label {
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--primary);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.8;
+}
+
+.activite-app-inner {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+}
+
+.activite-app-logo {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.activite-app-name {
+  font-size: 1.05rem;
+  color: var(--light);
+  font-weight: 600;
+}
+
+.activite-app-others {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid #1e1e28;
+  padding-top: 0.8rem;
+}
+
+.activite-app-other {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #777;
+  font-size: 0.88rem;
+}
+
+.activite-app-logo-sm {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+  border-radius: 4px;
+  opacity: 0.7;
+}
+
+.activite-app-idle {
+  border-color: #1a1a22;
+}
+
+.activite-idle-inner {
+  opacity: 0.4;
+}
+
+.activite-idle-icon {
+  font-size: 1.6rem;
+}
+
+
 @media (max-width: 768px) {
   .apropos-content {
+    grid-template-columns: 1fr;
+  }
+
+  .apropos-photo {
+    aspect-ratio: 4 / 3;
+    max-height: 320px;
+  }
+
+  .activite-grid {
     grid-template-columns: 1fr;
   }
 
@@ -506,6 +618,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     grid-template-columns: 1fr;
   }
 }
+
 
 .notification-banner {
     position: fixed;
@@ -616,6 +729,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
 .notification-banner.hide {
     animation: fadeOutSlide 0.3s ease forwards;
 }
+
 
 footer {
   background-color: #09090c;
