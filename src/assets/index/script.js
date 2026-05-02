@@ -183,8 +183,6 @@ function initNotification() {
 document.addEventListener('DOMContentLoaded', initNotification);
 
 
-
-
 async function fetchWeather() {
   const widget = document.getElementById('weather-widget');
   if (!widget) return;
@@ -228,3 +226,109 @@ async function fetchWeather() {
 }
 
 document.addEventListener('DOMContentLoaded', fetchWeather);
+
+
+
+let activiteTickInterval = null;
+
+async function fetchActivity() {
+  const container = document.getElementById('activite-content');
+  if (!container) return;
+
+  if (activiteTickInterval) {
+    clearInterval(activiteTickInterval);
+    activiteTickInterval = null;
+  }
+
+  try {
+    const res = await fetch('https://api.maxlware.com/v1/com/time');
+    if (!res.ok) throw new Error('API indisponible');
+    const data = await res.json();
+
+    const apps = Array.isArray(data.app) && data.app.length > 0 ? data.app : null;
+
+    const fetchedAt = Date.now();
+    const serverMs = data.time * 1000;
+    const offset = serverMs - fetchedAt;
+
+    function buildTimeHTML() {
+      const now = new Date(Date.now() + offset);
+      const hours = now.getHours();
+      const isDay = hours >= 7 && hours < 20;
+      return {
+        timeStr: now.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }),
+        dateStr: now.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }),
+        dayNightIcon: isDay ? 'assets/jour.png' : 'assets/nuit.png',
+        dayNightLabel: isDay ? 'Jour' : 'Nuit',
+      };
+    }
+
+    const { timeStr, dateStr, dayNightIcon, dayNightLabel } = buildTimeHTML();
+
+    container.innerHTML = `
+      <div class="activite-grid">
+
+        <div class="activite-time-card">
+          <div class="activite-time-top">
+            <img src="${dayNightIcon}" alt="${dayNightLabel}" class="activite-daynight-icon" id="activite-daynight-icon">
+            <div>
+              <div class="activite-time-value" id="activite-time-value">${timeStr}</div>
+              <div class="activite-date-value" id="activite-date-value">${dateStr}</div>
+            </div>
+          </div>
+          <div class="activite-timezone">🌍 Europe/Paris</div>
+        </div>
+
+        ${apps ? `
+        <div class="activite-app-card">
+          <span class="activite-app-label">Application en cours</span>
+          <div class="activite-app-inner">
+            <img src="${apps[0].logo}" alt="${apps[0].name}" class="activite-app-logo">
+            <span class="activite-app-name">${apps[0].name}</span>
+          </div>
+          ${apps.length > 1 ? `
+          <div class="activite-app-others">
+            ${apps.slice(1).map(a => `
+              <div class="activite-app-other">
+                <img src="${a.logo}" alt="${a.name}" class="activite-app-logo-sm">
+                <span>${a.name}</span>
+              </div>
+            `).join('')}
+          </div>` : ''}
+        </div>
+        ` : `
+        <div class="activite-app-card activite-app-idle">
+          <span class="activite-app-label">Application en cours</span>
+          <div class="activite-app-inner activite-idle-inner">
+            <span class="activite-idle-icon">💤</span>
+            <span class="activite-app-name">Aucune activité</span>
+          </div>
+        </div>
+        `}
+
+      </div>
+    `;
+
+    activiteTickInterval = setInterval(() => {
+      const timeEl  = document.getElementById('activite-time-value');
+      const dateEl  = document.getElementById('activite-date-value');
+      const iconEl  = document.getElementById('activite-daynight-icon');
+      if (!timeEl) { clearInterval(activiteTickInterval); return; }
+
+      const t = buildTimeHTML();
+      timeEl.textContent = t.timeStr;
+      dateEl.textContent = t.dateStr;
+      if (iconEl && iconEl.src !== t.dayNightIcon) {
+        iconEl.src = t.dayNightIcon;
+        iconEl.alt = t.dayNightLabel;
+      }
+    }, 1000);
+
+  } catch (err) {
+    console.warn('Activité non disponible :', err.message);
+    const container = document.getElementById('activite-content');
+    if (container) container.innerHTML = `<div class="activite-error">Activité indisponible</div>`;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchActivity);
