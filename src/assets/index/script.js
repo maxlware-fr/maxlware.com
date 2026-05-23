@@ -332,3 +332,44 @@ async function fetchActivity() {
 }
 
 document.addEventListener('DOMContentLoaded', fetchActivity);
+
+async function fetchRadioWidget() {
+  const widget     = document.getElementById('radio-widget');
+  const titleEl    = document.getElementById('radio-widget-title');
+  const artistEl   = document.getElementById('radio-widget-artist');
+  const coverEl    = document.getElementById('radio-cover');
+  const coverWrap  = document.getElementById('radio-cover-wrap');
+  if (!widget) return;
+
+  try {
+    const res   = await fetch('https://radio.maxlware.com/radio/now', { cache: 'no-store' });
+    const data  = await res.json();
+
+    if (!data.online) {
+      widget.classList.add('offline');
+      titleEl.textContent  = 'Hors ligne';
+      artistEl.textContent = '—';
+      return;
+    }
+
+    widget.classList.remove('offline');
+
+    const t = data.track;
+    titleEl.textContent  = t.title  || 'Inconnu';
+    artistEl.textContent = (t.artist || []).map(a => a.name).join(', ') || '—';
+
+    if (coverEl && t.logo && coverEl.src !== t.logo) {
+      coverEl.src = t.logo;
+    }
+
+    if (coverWrap) coverWrap.classList.add('playing');
+
+  } catch (err) {
+    console.warn('Radio widget indisponible :', err.message);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  fetchRadioWidget();
+  setInterval(fetchRadioWidget, 10000);
+});
