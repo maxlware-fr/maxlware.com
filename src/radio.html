@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Radio - Maxlware</title>
+  <title>Radio — Maxlware</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
-  <link rel="icon" href="assets/logo.png" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -336,6 +335,7 @@
       stroke-linejoin: round;
     }
 
+    /* Tooltip du bouton signaler */
     #report-tooltip {
       position: fixed;
       bottom: 92px;
@@ -368,6 +368,7 @@
       transform: translateY(0);
     }
 
+    /* Panel "À suivre" */
     #upcoming-panel {
       position: fixed;
       top: 18px; right: 18px;
@@ -558,6 +559,7 @@
   const upArtist2 = document.getElementById("up-artist-2");
   const upEta2    = document.getElementById("up-eta-2");
 
+  // Charger la liste des pistes une fois
   async function loadTracks() {
     try {
       const res  = await fetch(TRACKS_API, { cache: "no-store" });
@@ -569,7 +571,8 @@
   }
   loadTracks();
 
-  let localRemaining   = 0;
+  // Countdown local — synchronisé sur chaque poll
+  let localRemaining   = 0;   // secondes restantes pour la track en cours
   let countdownTimer   = null;
 
   function renderUpcoming() {
@@ -603,8 +606,10 @@
   }
 
   function updateUpcoming(currentId, remainingSec) {
+    // Synchronise le remaining depuis le serveur à chaque poll
     localRemaining = Math.max(0, remainingSec);
     renderUpcoming();
+    // (Re)démarre le décompte local si pas encore lancé
     if (!countdownTimer) startCountdown();
   }
 
@@ -647,7 +652,7 @@
     trackTitle.textContent = t.title  || "Inconnu";
     trackAlbum.textContent = t.album  || "";
     trackArtists.innerHTML = (t.artist || []).map(a =>
-      `<span class="artist-chip">${a.name}${a.certified ? certified(a.certified_golden) : ""}</span>`
+      `<span class="artist-chip">${a.name}${(a.certified || a.certified_golden) ? certified(a.certified_golden) : ""}</span>`
     ).join("");
 
     audio.src = t.track_url;
@@ -705,6 +710,7 @@
       }
       offlineBanner.style.display = "none";
 
+      // Durée depuis allTracks (plus fiable que la réponse /now)
       const trackMeta = allTracks.find(t => t.id === state.track.id);
       const duration  = trackMeta ? trackMeta.duration_sec : (state.track.duration_sec || 0);
       const remaining = duration - state.position_sec;
