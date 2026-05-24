@@ -3,11 +3,12 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Radio — Maxlware</title>
+  <title>Radio - Maxlware</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" href="assets/logo.png" />
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -168,8 +169,49 @@
       display: inline-flex; align-items: center; justify-content: center;
       width: 16px; height: 16px;
       background: #1d9bf0; border-radius: 50%; flex-shrink: 0;
+      position: relative; cursor: default;
     }
+    .certified-icon.golden { background: #f0b429; }
     .certified-icon svg { width: 9px; height: 9px; }
+
+    .certified-icon .cert-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%; transform: translateX(-50%);
+      white-space: nowrap;
+      background: rgba(14, 14, 17, 0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.85);
+      font-family: 'Syne Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: .5px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease, transform .2s ease;
+      transform: translateX(-50%) translateY(4px);
+      z-index: 999;
+    }
+    .certified-icon.golden .cert-tooltip {
+      border-color: rgba(240, 180, 41, 0.35);
+      color: #f0b429;
+    }
+    .certified-icon .cert-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(14, 14, 17, 0.92);
+    }
+    .certified-icon.golden .cert-tooltip::after {
+      border-top-color: rgba(14, 14, 17, 0.92);
+    }
+    .certified-icon:hover .cert-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     .progress-wrap { width: 100%; margin-bottom: 22px; }
 
@@ -208,7 +250,42 @@
       50%      { opacity: .4; transform: scale(.7); }
     }
 
-    .controls { display: flex; align-items: center; justify-content: center; }
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #play-label {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%; transform: translateX(-50%) translateY(4px);
+      font-family: 'Syne Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.8);
+      background: rgba(14,14,17,0.88);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 5px 11px;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    #play-label::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(14,14,17,0.88);
+    }
+    #play-btn:hover + #play-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
 
     #play-btn {
       width: 62px; height: 62px; border-radius: 50%; border: none;
@@ -226,10 +303,7 @@
     .fade-in  { opacity: 1 !important; transition: opacity .4s ease; }
 
     #report-btn {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      z-index: 200;
+      position: relative;
       width: 56px;
       height: 56px;
       border-radius: 50%;
@@ -262,6 +336,93 @@
       stroke-linejoin: round;
     }
 
+    #report-tooltip {
+      position: fixed;
+      bottom: 92px;
+      right: 24px;
+      z-index: 201;
+      background: rgba(14, 14, 17, 0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      color: rgba(255,255,255,0.8);
+      font-family: 'Syne Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .5px;
+      padding: 7px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    #report-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; right: 19px;
+      border: 5px solid transparent;
+      border-top-color: rgba(14, 14, 17, 0.92);
+    }
+    #report-wrap:hover #report-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    #upcoming-panel {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 220px;
+    }
+    .upcoming-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,.25);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .upcoming-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(14,14,17,0.65);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 8px 10px;
+      backdrop-filter: blur(12px);
+      transition: border-color .2s;
+    }
+    .upcoming-card:hover { border-color: rgba(255,255,255,0.15); }
+    .upcoming-cover {
+      width: 38px; height: 38px;
+      border-radius: 5px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: rgba(255,255,255,.06);
+    }
+    .upcoming-info { flex: 1; min-width: 0; }
+    .upcoming-title {
+      font-size: .8rem; font-weight: 700;
+      color: rgba(255,255,255,.85);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .upcoming-artist {
+      font-size: .68rem; color: rgba(255,255,255,.4);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .upcoming-eta {
+      font-family: 'Syne Mono', monospace;
+      font-size: .62rem; color: rgba(255,255,255,.3);
+      flex-shrink: 0; letter-spacing: .5px;
+    }
+
+    @media (max-width: 600px) { #upcoming-panel { display: none; } }
+
     @media (max-width: 480px) {
       .cover-wrap, #cover-img { width: 175px; height: 175px; }
       .track-title { font-size: 1.2rem; }
@@ -285,14 +446,37 @@
   RETOUR
 </a>
 
-<button id="report-btn" title="Signaler / Demander la suppression de cette musique">
-  <svg viewBox="0 0 24 24">
-    <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
-    <line x1="4" y1="22" x2="4" y2="15"/>
-    <line x1="17" y1="8" x2="21" y2="12"/>
-    <line x1="21" y1="8" x2="17" y2="12"/>
-  </svg>
-</button>
+<div id="report-wrap" style="position:fixed;bottom:24px;right:24px;z-index:200;">
+  <button id="report-btn" title="Signaler / Demander la suppression de cette musique">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+      <line x1="4" y1="22" x2="4" y2="15"/>
+      <line x1="17" y1="8" x2="21" y2="12"/>
+      <line x1="21" y1="8" x2="17" y2="12"/>
+    </svg>
+  </button>
+  <div id="report-tooltip">Vous voulez faire supprimer votre musique ?</div>
+</div>
+
+<div id="upcoming-panel">
+  <div class="upcoming-label">À suivre</div>
+  <div class="upcoming-card" id="up-card-1">
+    <img class="upcoming-cover" id="up-cover-1" src="" alt="" />
+    <div class="upcoming-info">
+      <div class="upcoming-title" id="up-title-1">—</div>
+      <div class="upcoming-artist" id="up-artist-1">—</div>
+    </div>
+    <div class="upcoming-eta" id="up-eta-1">—</div>
+  </div>
+  <div class="upcoming-card" id="up-card-2">
+    <img class="upcoming-cover" id="up-cover-2" src="" alt="" />
+    <div class="upcoming-info">
+      <div class="upcoming-title" id="up-title-2">—</div>
+      <div class="upcoming-artist" id="up-artist-2">—</div>
+    </div>
+    <div class="upcoming-eta" id="up-eta-2">—</div>
+  </div>
+</div>
 
 <div id="stage">
   <div class="player-card">
@@ -331,6 +515,7 @@
           <rect x="14" y="4" width="4" height="16" rx="1"/>
         </svg>
       </button>
+      <span id="play-label">Jouer</span>
     </div>
 
   </div>
@@ -339,7 +524,8 @@
 <audio id="audio" preload="none"></audio>
 
 <script>
-  const API = "https://radio.maxlware.com/radio/now";
+  const API        = "https://radio.maxlware.com/radio/now";
+  const TRACKS_API = "https://radio.maxlware.com/radio/tracks";
   const POLL_INTERVAL = 1000;
 
   const audio        = document.getElementById("audio");
@@ -361,18 +547,83 @@
   let currentTrackId  = null;
   let playing         = false;
   let userPaused      = false;
+  let allTracks       = [];
+
+  const upCover1  = document.getElementById("up-cover-1");
+  const upTitle1  = document.getElementById("up-title-1");
+  const upArtist1 = document.getElementById("up-artist-1");
+  const upEta1    = document.getElementById("up-eta-1");
+  const upCover2  = document.getElementById("up-cover-2");
+  const upTitle2  = document.getElementById("up-title-2");
+  const upArtist2 = document.getElementById("up-artist-2");
+  const upEta2    = document.getElementById("up-eta-2");
+
+  async function loadTracks() {
+    try {
+      const res  = await fetch(TRACKS_API, { cache: "no-store" });
+      const data = await res.json();
+      allTracks  = data.tracks || [];
+    } catch (e) {
+      console.warn("Impossible de charger les pistes :", e);
+    }
+  }
+  loadTracks();
+
+  let localRemaining   = 0;
+  let countdownTimer   = null;
+
+  function renderUpcoming() {
+    if (!allTracks.length || currentTrackId === null) return;
+    const idx = allTracks.findIndex(t => t.id === currentTrackId);
+    if (idx === -1) return;
+
+    const next1 = allTracks[(idx + 1) % allTracks.length];
+    const next2 = allTracks[(idx + 2) % allTracks.length];
+
+    const eta1 = Math.max(0, Math.round(localRemaining));
+    const eta2 = eta1 + (next1.duration_sec || 0);
+
+    upCover1.src          = next1.logo || "";
+    upTitle1.textContent  = next1.title || "Inconnu";
+    upArtist1.textContent = (next1.artist || []).map(a => a.name).join(", ");
+    upEta1.textContent    = fmt(eta1);
+
+    upCover2.src          = next2.logo || "";
+    upTitle2.textContent  = next2.title || "Inconnu";
+    upArtist2.textContent = (next2.artist || []).map(a => a.name).join(", ");
+    upEta2.textContent    = "dans " + fmt(eta2);
+  }
+
+  function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => {
+      localRemaining = Math.max(0, localRemaining - 1);
+      renderUpcoming();
+    }, 1000);
+  }
+
+  function updateUpcoming(currentId, remainingSec) {
+    localRemaining = Math.max(0, remainingSec);
+    renderUpcoming();
+    if (!countdownTimer) startCountdown();
+  }
 
   function fmt(sec) {
     const s = Math.floor(sec);
     return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
   }
 
-  function certified() {
-    return `<span class="certified-icon" title="Artiste certifié">
+  function certified(golden = false) {
+    const cls     = golden ? "certified-icon golden" : "certified-icon";
+    const tooltip = golden
+      ? "Le profil à autorisé la diffusion de la musique et à été vérifié"
+      : "Le profil à été vérifié par Maxlware";
+    return `<span class="${cls}">
       <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
            stroke-linecap="round" stroke-linejoin="round">
         <polyline points="20 6 9 17 4 12"/>
       </svg>
+      <span class="cert-tooltip">${tooltip}</span>
     </span>`;
   }
 
@@ -396,7 +647,7 @@
     trackTitle.textContent = t.title  || "Inconnu";
     trackAlbum.textContent = t.album  || "";
     trackArtists.innerHTML = (t.artist || []).map(a =>
-      `<span class="artist-chip">${a.name}${a.certified ? certified() : ""}</span>`
+      `<span class="artist-chip">${a.name}${a.certified ? certified(a.certified_golden) : ""}</span>`
     ).join("");
 
     audio.src = t.track_url;
@@ -414,11 +665,14 @@
     timeTotal.textContent    = state.time_end;
   }
 
+  const playLabel = document.getElementById("play-label");
+
   function setPlaying(state) {
     playing = state;
-    iconPlay.style.display  = playing ? "none"  : "block";
-    iconPause.style.display = playing ? "block" : "none";
+    iconPlay.style.display   = playing ? "none"  : "block";
+    iconPause.style.display  = playing ? "block" : "none";
     coverWrap.classList.toggle("playing", playing);
+    playLabel.textContent    = playing ? "Pause" : "Jouer";
   }
 
   playBtn.addEventListener("click", () => {
@@ -451,6 +705,10 @@
       }
       offlineBanner.style.display = "none";
 
+      const trackMeta = allTracks.find(t => t.id === state.track.id);
+      const duration  = trackMeta ? trackMeta.duration_sec : (state.track.duration_sec || 0);
+      const remaining = duration - state.position_sec;
+
       if (state.track.id !== currentTrackId) {
         applyTrack(state);
       } else {
@@ -460,6 +718,8 @@
           audio.currentTime = state.position_sec;
         }
       }
+
+      updateUpcoming(state.track.id, remaining);
 
     } catch (err) {
       console.warn("Erreur poll radio :", err);
