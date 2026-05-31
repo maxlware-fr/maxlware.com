@@ -87,14 +87,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (data.com_access === "false") {
       return setTimeout(() => {
         window.location.href = "maintenance.html";
-      }, 1000);
+      }, 100);
     }
 
     const routes = {
       contact: "fr-fr/contact.html?ref=index",
       discord: "https://discord.maxlware.com?ref=index",
       jobs: "jobs.html?ref=index",
-      github: "https://github.com/maxlware-fr?ref=index"
+      github: "https://github.com/maxlware-fr?ref=index",
+      credits: "acknowledgements.html?ref=index"
     };
 
     const lang = navigator.language.toLowerCase();
@@ -106,12 +107,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     setTimeout(() => {
       window.location.href = target;
-    }, 1000);
+    }, 100);
 
   } catch (e) {
     setTimeout(() => {
       window.location.href = "maintenance.html";
-    }, 1000);
+    }, 100);
   }
 });
 </script>
