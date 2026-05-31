@@ -21,16 +21,16 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
     src: local('Courier New'), local('Consolas'), monospace;
 }
 :root {
-    --primary: #6e48aa;
-    --secondary: #9d50bb;
+    --primary: #26b4fe;
+    --secondary: #26b4fe;
     --dark: #0e0e11;
     --light: #ffffff;
 }
 body {
-    background-color: var(--dark);
+    background-color: var(--light);
     margin: 0;
     font-family: 'Console', monospace;
-    color: var(--light);
+    color: var(--dark);
     line-height: 1.6;
 }
 a {
@@ -41,7 +41,7 @@ a:hover {
     text-decoration: underline;
 }
 .hero {
-    background-color: var(--dark);
+    background-color: var(--light);
     height: 100vh;
     display: flex;
     justify-content: center;
@@ -55,26 +55,26 @@ a:hover {
     padding: 2rem;
     max-width: 800px;
     text-align: center;
-    text-shadow: 0 0 5px rgba(79, 195, 247, 0.5);
+    text-shadow: 0 0 5px rgba(8, 38, 53, 0.5);
 }
 .title {
     font-family: 'Syne', sans-serif;
-    font-weight: 800;
-    font-size: 5rem;
+    font-weight: 400;
+    font-size: 3rem;
     margin-bottom: 1rem;
     border-bottom: 1px solid #333;
     padding-bottom: 0.5rem;
 }
 .subtitle {
-    color: #bdbdbd;
-    font-size: 1.2rem;
+    color: #292929;
+    font-size: 0.8rem;
     margin-bottom: 1rem;
 }
 
 .message-container {
     height: 1.2rem;
     margin-bottom: 2rem;
-    color: #9d9d9d;
+    color: #292929;
     font-size: 1rem;
     font-family: 'Console', monospace;
     overflow: hidden;
@@ -111,6 +111,9 @@ a:hover {
 <body>
 <div class="hero">
     <div class="hero-content">
+        <div class="logo">
+            <img src="assets/idk.jpg" alt="Maxware Logo" width="120">
+        </div>
         <div class="title cursor">404</div>
         <div class="subtitle">Oops! The page you are looking for does not exist.</div>
 
