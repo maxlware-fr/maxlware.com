@@ -396,12 +396,57 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
 
 .apropos-photo {
   width: 100%;
-  aspect-ratio: 3 / 4;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   border-radius: 6px;
   border: 1px solid #222;
   display: block;
   background: #13131a;
+  cursor: pointer;
+}
+
+.apropos-photo.paused::after {
+  content: '▶';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: rgba(255,255,255,0.85);
+  pointer-events: none;
+}
+
+.apropos-video-wrapper {
+  position: relative;
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #222;
+  background: #13131a;
+  cursor: pointer;
+}
+
+.apropos-video-wrapper video {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  display: block;
+}
+
+.apropos-video-wrapper .play-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: rgba(255,255,255,0.85);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.apropos-video-wrapper.paused .play-overlay {
+  opacity: 1;
 }
 
 .apropos-text {
@@ -596,8 +641,8 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
   }
 
   .apropos-photo {
-    aspect-ratio: 4 / 3;
-    max-height: 320px;
+    aspect-ratio: 16 / 9;
+    max-height: none;
   }
 
   .activite-grid {
