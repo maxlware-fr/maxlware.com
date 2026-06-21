@@ -332,3 +332,19 @@ async function fetchActivity() {
 }
 
 document.addEventListener('DOMContentLoaded', fetchActivity);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const wrapper = document.getElementById('apropos-video-wrapper');
+    const video = document.getElementById('apropos-video');
+    if (!wrapper || !video) return;
+
+    wrapper.addEventListener('click', function () {
+      if (video.paused) {
+        video.play();
+        wrapper.classList.remove('paused');
+      } else {
+        video.pause();
+        wrapper.classList.add('paused');
+      }
+    });
+  });
