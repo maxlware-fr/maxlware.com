@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Radio - Maxlware</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Syne+Mono&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      overflow: hidden;
+      background: var(--dark);
+      font-family: 'Syne', sans-serif;
+    }
+
+    #bg-layer {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    #bg-video {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    #bg-image {
+      width: 100%; height: 100%;
+      background-size: cover;
+      background-position: center;
+      filter: blur(28px) brightness(0.3) saturate(1.5);
+      transform: scale(1.08);
+      transition: background-image 1s ease;
+    }
+
+    #bg-layer::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: repeating-linear-gradient(0deg,
+        rgba(0,0,0,0.12), rgba(0,0,0,0.12) 1px,
+        transparent 1px, transparent 3px
+      );
+      pointer-events: none; z-index: 2;
+    }
+
+    #bg-layer::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: radial-gradient(ellipse at center, transparent 20%, rgba(0,0,0,0.75) 100%);
+      z-index: 1; pointer-events: none;
+    }
+
+    .back-btn {
+      position: fixed; top: 18px; left: 18px; z-index: 100;
+      display: flex; align-items: center; gap: 8px;
+      padding: 8px 14px;
+      background: rgba(14,14,17,0.75);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 6px;
+      color: rgba(255,255,255,0.65);
+      font-family: 'Syne Mono', monospace;
+      font-size: 0.78rem; letter-spacing: 1px;
+      text-decoration: none;
+      backdrop-filter: blur(10px);
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .back-btn svg { width: 14px; height: 14px; opacity: .7; transition: transform .2s; }
+    .back-btn:hover {
+      border-color: var(--primary); color: var(--light);
+      background: rgba(110,72,170,.15); text-decoration: none;
+    }
+    .back-btn:hover svg { transform: translateX(-2px); opacity: 1; }
+
+    #offline-banner {
+      position: fixed; top: 18px; left: 50%; transform: translateX(-50%);
+      z-index: 100; padding: 8px 20px;
+      background: rgba(204,0,0,.15);
+      border: 1px solid rgba(204,0,0,.3);
+      border-radius: 4px; color: #ff6b6b;
+      font-family: 'Syne Mono', monospace; font-size: .8rem; letter-spacing: 1px;
+      display: none;
+    }
+
+    #stage {
+      position: relative; z-index: 10;
+      height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .player-card {
+      display: flex; flex-direction: column; align-items: center;
+      width: min(380px, 90vw);
+    }
+
+    .cover-wrap {
+      position: relative; width: 220px; height: 220px;
+      margin-bottom: 30px;
+    }
+
+    .cover-wrap::before {
+      content: '';
+      position: absolute; inset: -8px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--primary), var(--secondary), #4fc3f7, var(--primary));
+      opacity: 0; filter: blur(6px);
+      animation: spin-ring 4s linear infinite paused;
+      transition: opacity .5s;
+    }
+    .cover-wrap.playing::before { opacity: .6; animation-play-state: running; }
+    @keyframes spin-ring { to { transform: rotate(360deg); } }
+
+    #cover-img {
+      width: 220px; height: 220px; border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid rgba(255,255,255,.08);
+      position: relative; z-index: 1;
+      box-shadow: 0 8px 40px rgba(0,0,0,.6);
+      animation: spin-cover 12s linear infinite paused;
+      transition: opacity .4s;
+    }
+    .cover-wrap.playing #cover-img { animation-play-state: running; }
+    @keyframes spin-cover { to { transform: rotate(360deg); } }
+
+    .cover-wrap::after {
+      content: '';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 18px; height: 18px;
+      background: var(--dark);
+      border: 2px solid rgba(255,255,255,.12);
+      border-radius: 50%; z-index: 2;
+    }
+
+    .track-info { text-align: center; margin-bottom: 22px; width: 100%; }
+
+    .track-title {
+      font-size: 1.45rem; font-weight: 800; color: var(--light);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-bottom: 5px; transition: opacity .3s;
+    }
+
+    .track-album {
+      font-family: 'Syne Mono', monospace; font-size: .72rem;
+      color: rgba(255,255,255,.3); letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 10px;
+    }
+
+    .track-artists {
+      display: flex; align-items: center; justify-content: center;
+      flex-wrap: wrap; gap: 6px;
+    }
+
+    .track-description {
+      font-size: .78rem; line-height: 1.4;
+      color: rgba(255,255,255,.4);
+      margin-top: 12px;
+      max-width: 320px;
+      margin-left: auto; margin-right: auto;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .artist-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: .88rem; color: rgba(255,255,255,.6); font-weight: 600;
+    }
+    .artist-chip + .artist-chip::before { content: '·'; color: rgba(255,255,255,.2); margin-right: 1px; }
+
+    .certified-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 16px; height: 16px;
+      background: #1d9bf0; border-radius: 50%; flex-shrink: 0;
+      position: relative; cursor: default;
+    }
+    .certified-icon.golden { background: #f0b429; }
+    .certified-icon svg { width: 9px; height: 9px; }
+
+    .certified-icon .cert-tooltip {
+      position: absolute;
+      bottom: calc(100% + 8px);
+      left: 50%; transform: translateX(-50%);
+      white-space: nowrap;
+      background: rgba(14, 14, 17, 0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      color: rgba(255,255,255,0.85);
+      font-family: 'Syne Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: .5px;
+      padding: 5px 10px;
+      border-radius: 5px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s ease, transform .2s ease;
+      transform: translateX(-50%) translateY(4px);
+      z-index: 999;
+    }
+    .certified-icon.golden .cert-tooltip {
+      border-color: rgba(240, 180, 41, 0.35);
+      color: #f0b429;
+    }
+    .certified-icon .cert-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(14, 14, 17, 0.92);
+    }
+    .certified-icon.golden .cert-tooltip::after {
+      border-top-color: rgba(14, 14, 17, 0.92);
+    }
+    .certified-icon:hover .cert-tooltip {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .progress-wrap { width: 100%; margin-bottom: 22px; }
+
+    .progress-bar-track {
+      width: 100%; height: 3px;
+      background: rgba(255,255,255,.1); border-radius: 99px;
+      margin-bottom: 8px;
+    }
+
+    .progress-bar-fill {
+      height: 100%; width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 99px; transition: width .9s linear;
+    }
+
+    .progress-times {
+      display: flex; justify-content: space-between;
+      font-family: 'Syne Mono', monospace; font-size: .7rem;
+      color: rgba(255,255,255,.3); letter-spacing: .5px;
+    }
+
+    .live-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-family: 'Syne Mono', monospace; font-size: .68rem;
+      letter-spacing: 2px; color: rgba(255,255,255,.35);
+      margin-bottom: 20px;
+    }
+    .live-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: #4caf50;
+      box-shadow: 0 0 6px #4caf50;
+      animation: pulse-dot 1.8s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+      0%,100% { opacity: 1; transform: scale(1); }
+      50%      { opacity: .4; transform: scale(.7); }
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    #play-label {
+      position: absolute;
+      bottom: calc(100% + 10px);
+      left: 50%; transform: translateX(-50%) translateY(4px);
+      font-family: 'Syne Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.8);
+      background: rgba(14,14,17,0.88);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(10px);
+      padding: 5px 11px;
+      border-radius: 5px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .18s ease, transform .18s ease;
+    }
+    #play-label::after {
+      content: '';
+      position: absolute;
+      top: 100%; left: 50%; transform: translateX(-50%);
+      border: 5px solid transparent;
+      border-top-color: rgba(14,14,17,0.88);
+    }
+    #play-btn:hover + #play-label {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    #play-btn {
+      width: 62px; height: 62px; border-radius: 50%; border: none;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 20px rgba(110,72,170,.5);
+      transition: transform .15s, box-shadow .2s;
+    }
+    #play-btn:hover  { transform: scale(1.07); box-shadow: 0 6px 28px rgba(110,72,170,.7); }
+    #play-btn:active { transform: scale(.96); }
+    #play-btn svg { width: 26px; height: 26px; }
+
+    .fade-out { opacity: 0 !important; transition: opacity .3s ease; }
+    .fade-in  { opacity: 1 !important; transition: opacity .4s ease; }
+
+    #report-btn {
+      position: relative;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(20, 20, 25, 0.65);
+      backdrop-filter: blur(12px);
+      color: #ffffff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      transition: background 0.25s, transform 0.2s, border-color 0.2s;
+    }
+    #report-btn:hover {
+      background: rgba(110, 72, 170, 0.2);
+      border-color: var(--primary);
+      transform: scale(1.08);
+    }
+    #report-btn:active {
+      transform: scale(0.95);
+    }
+    #report-btn svg {
+      width: 24px;
+      height: 24px;
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    /* Tooltip du bouton signaler */
+    #report-tooltip {
+      position: fixed;
+      bottom: 92px;
+      right: 24px;
+      z-index: 201;
+      background: rgba(14, 14, 17, 0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(12px);
+      color: rgba(255,255,255,0.8);
+      font-family: 'Syne Mono', monospace;
+      font-size: .68rem;
+      letter-spacing: .5px;
+      padding: 7px 12px;
+      border-radius: 6px;
+      white-space: nowrap;
+      pointer-events: none;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity .2s ease, transform .2s ease;
+    }
+    #report-tooltip::after {
+      content: '';
+      position: absolute;
+      top: 100%; right: 19px;
+      border: 5px solid transparent;
+      border-top-color: rgba(14, 14, 17, 0.92);
+    }
+    #report-wrap:hover #report-tooltip {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Panel "À suivre" */
+    #upcoming-panel {
+      position: fixed;
+      top: 18px; right: 18px;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 220px;
+    }
+    .upcoming-label {
+      font-family: 'Syne Mono', monospace;
+      font-size: .6rem;
+      letter-spacing: 2px;
+      color: rgba(255,255,255,.25);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .upcoming-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(14,14,17,0.65);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px;
+      padding: 8px 10px;
+      backdrop-filter: blur(12px);
+      transition: border-color .2s;
+    }
+    .upcoming-card:hover { border-color: rgba(255,255,255,0.15); }
+    .upcoming-cover {
+      width: 38px; height: 38px;
+      border-radius: 5px;
+      object-fit: cover;
+      flex-shrink: 0;
+      background: rgba(255,255,255,.06);
+    }
+    .upcoming-info { flex: 1; min-width: 0; }
+    .upcoming-title {
+      font-size: .8rem; font-weight: 700;
+      color: rgba(255,255,255,.85);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .upcoming-artist {
+      font-size: .68rem; color: rgba(255,255,255,.4);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 2px;
+    }
+    .upcoming-eta {
+      font-family: 'Syne Mono', monospace;
+      font-size: .62rem; color: rgba(255,255,255,.3);
+      flex-shrink: 0; letter-spacing: .5px;
+    }
+
+    @media (max-width: 600px) { #upcoming-panel { display: none; } }
+
+    @media (max-width: 480px) {
+      .cover-wrap, #cover-img { width: 175px; height: 175px; }
+      .track-title { font-size: 1.2rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="bg-layer">
+  <video id="bg-video" autoplay muted loop playsinline></video>
+  <div id="bg-image"></div>
+</div>
+
+<div id="offline-banner">⚠ RADIO HORS LIGNE</div>
+
+<a class="back-btn" href="/">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+       stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+  RETOUR
+</a>
+
+<div id="report-wrap" style="position:fixed;bottom:24px;right:24px;z-index:200;">
+  <button id="report-btn" title="Signaler / Demander la suppression de cette musique">
+    <svg viewBox="0 0 24 24">
+      <path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/>
+      <line x1="4" y1="22" x2="4" y2="15"/>
+      <line x1="17" y1="8" x2="21" y2="12"/>
+      <line x1="21" y1="8" x2="17" y2="12"/>
+    </svg>
+  </button>
+  <div id="report-tooltip">Vous voulez faire supprimer votre musique ?</div>
+</div>
+
+<div id="upcoming-panel">
+  <div class="upcoming-label">À suivre</div>
+  <div class="upcoming-card" id="up-card-1">
+    <img class="upcoming-cover" id="up-cover-1" src="" alt="" />
+    <div class="upcoming-info">
+      <div class="upcoming-title" id="up-title-1">—</div>
+      <div class="upcoming-artist" id="up-artist-1">—</div>
+    </div>
+    <div class="upcoming-eta" id="up-eta-1">—</div>
+  </div>
+  <div class="upcoming-card" id="up-card-2">
+    <img class="upcoming-cover" id="up-cover-2" src="" alt="" />
+    <div class="upcoming-info">
+      <div class="upcoming-title" id="up-title-2">—</div>
+      <div class="upcoming-artist" id="up-artist-2">—</div>
+    </div>
+    <div class="upcoming-eta" id="up-eta-2">—</div>
+  </div>
+</div>
+
+<div id="stage">
+  <div class="player-card">
+
+    <div class="cover-wrap" id="cover-wrap">
+      <img id="cover-img" src="" alt="Cover" />
+    </div>
+
+    <div class="track-info">
+      <div class="track-title"  id="track-title">Connexion…</div>
+      <div class="track-album"  id="track-album">—</div>
+      <div class="track-artists" id="track-artists"></div>
+      <div class="track-description" id="track-description"></div>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progress-fill"></div>
+      </div>
+      <div class="progress-times">
+        <span id="time-current">0:00</span>
+        <span id="time-total">0:00</span>
+      </div>
+    </div>
+
+    <div class="live-badge">
+      <span class="live-dot"></span> EN DIRECT
+    </div>
+
+    <div class="controls">
+      <button id="play-btn" title="Lecture / Pause">
+        <svg id="icon-play"  viewBox="0 0 24 24" fill="currentColor">
+          <polygon points="5 3 19 12 5 21 5 3"/>
+        </svg>
+        <svg id="icon-pause" viewBox="0 0 24 24" fill="currentColor" style="display:none">
+          <rect x="6" y="4" width="4" height="16" rx="1"/>
+          <rect x="14" y="4" width="4" height="16" rx="1"/>
+        </svg>
+      </button>
+      <span id="play-label">Jouer</span>
+    </div>
+
+  </div>
+</div>
+
+<audio id="audio" preload="none"></audio>
+
+<script>
+  const API        = "https://radio.maxlware.com/radio/now";
+  const TRACKS_API = "https://radio.maxlware.com/radio/tracks";
+  const POLL_INTERVAL = 1000;
+
+  const audio        = document.getElementById("audio");
+  const coverWrap    = document.getElementById("cover-wrap");
+  const coverImg     = document.getElementById("cover-img");
+  const trackTitle   = document.getElementById("track-title");
+  const trackAlbum   = document.getElementById("track-album");
+  const trackArtists = document.getElementById("track-artists");
+  const trackDescription = document.getElementById("track-description");
+  const bgVideo      = document.getElementById("bg-video");
+  const bgImage      = document.getElementById("bg-image");
+  const offlineBanner= document.getElementById("offline-banner");
+  const progressFill = document.getElementById("progress-fill");
+  const timeCurrent  = document.getElementById("time-current");
+  const timeTotal    = document.getElementById("time-total");
+  const playBtn      = document.getElementById("play-btn");
+  const iconPlay     = document.getElementById("icon-play");
+  const iconPause    = document.getElementById("icon-pause");
+
+  let currentTrackId  = null;
+  let playing         = false;
+  let userPaused      = false;
+  let allTracks       = [];
+  let currentDuration = 0;
+  let progressTicker  = null;
+
+  const upCover1  = document.getElementById("up-cover-1");
+  const upTitle1  = document.getElementById("up-title-1");
+  const upArtist1 = document.getElementById("up-artist-1");
+  const upEta1    = document.getElementById("up-eta-1");
+  const upCover2  = document.getElementById("up-cover-2");
+  const upTitle2  = document.getElementById("up-title-2");
+  const upArtist2 = document.getElementById("up-artist-2");
+  const upEta2    = document.getElementById("up-eta-2");
+
+  // Charger la liste des pistes une fois
+  async function loadTracks() {
+    try {
+      const res  = await fetch(TRACKS_API, { cache: "no-store" });
+      const data = await res.json();
+      allTracks  = data.tracks || [];
+    } catch (e) {
+      console.warn("Impossible de charger les pistes :", e);
+    }
+  }
+  loadTracks();
+
+  // Countdown local — synchronisé sur chaque poll
+  let localRemaining   = 0;   // secondes restantes pour la track en cours
+  let countdownTimer   = null;
+
+  function renderUpcoming() {
+    if (!allTracks.length || currentTrackId === null) return;
+    const idx = allTracks.findIndex(t => t.id === currentTrackId);
+    if (idx === -1) return;
+
+    const next1 = allTracks[(idx + 1) % allTracks.length];
+    const next2 = allTracks[(idx + 2) % allTracks.length];
+
+    const eta1 = Math.max(0, Math.round(localRemaining));
+    const eta2 = eta1 + (next1.duration_sec || 0);
+
+    upCover1.src          = next1.logo || "";
+    upTitle1.textContent  = next1.title || "Inconnu";
+    upArtist1.textContent = (next1.artist || []).map(a => a.name).join(", ");
+    upEta1.textContent    = fmt(eta1);
+
+    upCover2.src          = next2.logo || "";
+    upTitle2.textContent  = next2.title || "Inconnu";
+    upArtist2.textContent = (next2.artist || []).map(a => a.name).join(", ");
+    upEta2.textContent    = "dans " + fmt(eta2);
+  }
+
+  function startCountdown() {
+    if (countdownTimer) clearInterval(countdownTimer);
+    countdownTimer = setInterval(() => {
+      localRemaining = Math.max(0, localRemaining - 1);
+      renderUpcoming();
+    }, 1000);
+  }
+
+  function updateUpcoming(currentId, remainingSec) {
+    // Synchronise le remaining depuis le serveur à chaque poll
+    localRemaining = Math.max(0, remainingSec);
+    renderUpcoming();
+    // (Re)démarre le décompte local si pas encore lancé
+    if (!countdownTimer) startCountdown();
+  }
+
+  function fmt(sec) {
+    const s = Math.floor(sec);
+    return `${Math.floor(s/60)}:${String(s%60).padStart(2,"0")}`;
+  }
+
+  function certified(golden = false) {
+    const cls     = golden ? "certified-icon golden" : "certified-icon";
+    const tooltip = golden
+      ? "Le profil à autorisé la diffusion de la musique et à été vérifié"
+      : "Le profil à été vérifié par Maxlware";
+    return `<span class="${cls}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"
+           stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="20 6 9 17 4 12"/>
+      </svg>
+      <span class="cert-tooltip">${tooltip}</span>
+    </span>`;
+  }
+
+  function applyTrack(state) {
+    const t = state.track;
+    currentTrackId = t.id;
+
+    coverImg.src = t.logo || "";
+
+    if (t.video && t.video.active && t.video.video_url) {
+      bgVideo.src = t.video.video_url;
+      bgVideo.style.display = "block";
+      bgImage.style.backgroundImage = "none";
+      bgVideo.play().catch(() => {});
+    } else {
+      bgVideo.style.display = "none";
+      bgVideo.src = "";
+      bgImage.style.backgroundImage = t.logo ? `url('${t.logo}')` : "none";
+    }
+
+    trackTitle.textContent = t.title  || "Inconnu";
+    trackAlbum.textContent = t.album  || "";
+    trackArtists.innerHTML = (t.artist || []).map(a =>
+      `<span class="artist-chip">${a.name}${(a.certified || a.certified_golden) ? certified(a.certified_golden) : ""}</span>`
+    ).join("");
+    trackDescription.textContent = t.description || "";
+
+    updateProgress(state);
+
+    audio.src = t.track_url;
+    audio.load();
+    audio.addEventListener("canplay", function seek() {
+      audio.currentTime = state.position_sec;
+      audio.removeEventListener("canplay", seek);
+      if (!userPaused) audio.play().then(() => setPlaying(true)).catch(() => {});
+    }, { once: true });
+  }
+
+  function updateProgress(state) {
+    progressFill.style.width = (state.progress * 100).toFixed(2) + "%";
+    timeCurrent.textContent  = state.time_stamp;
+    timeTotal.textContent    = state.time_end;
+  }
+
+  // Fait avancer la barre en continu entre deux sondages serveur,
+  // au lieu d'attendre le prochain poll (toutes les 1s) pour bouger.
+  function startProgressTicker() {
+    if (progressTicker) clearInterval(progressTicker);
+    progressTicker = setInterval(() => {
+      if (!playing || !currentDuration || audio.paused) return;
+      const pct = Math.min(100, (audio.currentTime / currentDuration) * 100);
+      progressFill.style.width = pct.toFixed(2) + "%";
+      timeCurrent.textContent  = fmt(audio.currentTime);
+    }, 250);
+  }
+  startProgressTicker();
+
+  const playLabel = document.getElementById("play-label");
+
+  function setPlaying(state) {
+    playing = state;
+    iconPlay.style.display   = playing ? "none"  : "block";
+    iconPause.style.display  = playing ? "block" : "none";
+    coverWrap.classList.toggle("playing", playing);
+    playLabel.textContent    = playing ? "Pause" : "Jouer";
+  }
+
+  playBtn.addEventListener("click", () => {
+    if (playing) {
+      audio.pause();
+      setPlaying(false);
+      userPaused = true;
+    } else {
+      userPaused = false;
+      audio.play().then(() => setPlaying(true)).catch(() => {});
+    }
+  });
+
+  const reportBtn = document.getElementById("report-btn");
+  reportBtn.addEventListener("click", () => {
+    const currentTitle = trackTitle.textContent.trim() || "Sans titre";
+    const encodedTitle = encodeURIComponent(currentTitle);
+    const formUrl = `https://tally.so/r/kdk7oJ?titre=${encodedTitle}`;
+    window.open(formUrl, "_blank", "noopener");
+  });
+
+  async function poll() {
+    try {
+      const res   = await fetch(API, { cache: "no-store" });
+      const state = await res.json();
+
+      if (!state.online) {
+        offlineBanner.style.display = "block";
+        return;
+      }
+      offlineBanner.style.display = "none";
+
+      // Durée depuis allTracks (plus fiable que la réponse /now)
+      const trackMeta = allTracks.find(t => t.id === state.track.id);
+      const duration  = trackMeta ? trackMeta.duration_sec : (state.track.duration_sec || 0);
+      const remaining = duration - state.position_sec;
+      currentDuration = duration;
+
+      if (state.track.id !== currentTrackId) {
+        applyTrack(state);
+      } else {
+        updateProgress(state);
+
+        if (!userPaused && Math.abs(audio.currentTime - state.position_sec) > 3) {
+          audio.currentTime = state.position_sec;
+        }
+      }
+
+      updateUpcoming(state.track.id, remaining);
+
+    } catch (err) {
+      console.warn("Erreur poll radio :", err);
+    }
+  }
+
+  poll();
+  setInterval(poll, POLL_INTERVAL);
+</script>
+</body>
+</html>
