@@ -29,6 +29,7 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
       font-family: var(--police-big), var(--police);
       color: var(--light);
       line-height: 1.6;
+      overflow-x: hidden;
     }
 
     a {
@@ -389,6 +390,189 @@ M   M  A   A  X   X  LLLLL  W   W  A   A  R   R  EEEEE
   border-radius: 50%;
   background: var(--secondary);
   flex-shrink: 0;
+}
+
+.asso-timeline {
+  position: relative;
+}
+
+.asso-item {
+  display: flex;
+  gap: 1.2rem;
+}
+
+.asso-line-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 14px;
+  flex-shrink: 0;
+}
+
+.asso-dot {
+  width: 12px;
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 50%;
+  background: #444;
+  box-shadow: 0 0 0 3px #17171e;
+  flex-shrink: 0;
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.asso-item[data-status="active"] .asso-dot {
+  background: #4caf50;
+  box-shadow: 0 0 0 3px #17171e, 0 0 8px rgba(76, 175, 80, 0.55);
+}
+
+.asso-featured .asso-dot {
+  background: var(--secondary);
+  box-shadow: 0 0 0 3px #17171e, 0 0 10px rgba(157, 80, 187, 0.6);
+}
+
+.asso-line {
+  width: 2px;
+  flex: 1;
+  min-height: 32px;
+  margin-top: 4px;
+  background: linear-gradient(180deg, var(--primary), #242430);
+}
+
+.asso-item:last-child .asso-line {
+  display: none;
+}
+
+.asso-card {
+  flex: 1;
+  background: #13131a;
+  border: 1px solid #222;
+  border-radius: 6px;
+  padding: 1.2rem 1.4rem;
+  margin-bottom: 1.6rem;
+  transition: border-color 0.2s ease;
+}
+
+.asso-featured .asso-card {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 1px var(--primary) inset;
+}
+
+.asso-card:hover {
+  border-color: #444;
+}
+
+.asso-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.asso-period {
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.78rem;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+.asso-badge {
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.7rem;
+  color: #888;
+  background: #1c1c1c;
+  padding: 2px 8px;
+  border-radius: 3px;
+  border: 1px solid #333;
+  white-space: nowrap;
+}
+
+.asso-badge.active {
+  color: #4caf50;
+  border-color: #2a4a2a;
+  background: #0d1f0d;
+}
+
+.asso-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.4rem;
+}
+
+.asso-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: #1c1c1c;
+  border: 1px solid #2a2a33;
+}
+
+.asso-logo-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  color: var(--light);
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+}
+
+.asso-name {
+  margin: 0;
+  font-size: 1.1rem;
+  color: var(--light);
+}
+
+.asso-desc {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #999;
+  line-height: 1.5;
+}
+
+.asso-more {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.5s ease;
+}
+
+.asso-more.open {
+  max-height: 1200px;
+}
+
+.asso-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #13131a;
+  border: 1px solid #222;
+  color: #aaa;
+  font-family: 'Syne Mono', monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.asso-toggle-btn:hover {
+  border-color: #444;
+  color: var(--light);
+}
+
+.asso-toggle-icon {
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.asso-toggle-btn.open .asso-toggle-icon {
+  transform: rotate(180deg);
 }
 
 
