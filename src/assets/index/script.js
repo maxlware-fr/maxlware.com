@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
   const partenaires = [
     { logo: "assets/Nathxn_Azuur.png", lien: "https://nathxnazuur.fr/"},
-    { logo: "assets/logo_iptron.png", lien: "https://iptron.xyz" },
     { logo: "assets/logo_cloud.png", lien: "https://cryptdev.fr" },
+    { logo: "assets/logo-elxcloud.png", lien: "https://client.elxcloud.fr"},
   ];
 
   const img = document.querySelector(".diapo img");
@@ -332,6 +332,23 @@ async function fetchActivity() {
 }
 
 document.addEventListener('DOMContentLoaded', fetchActivity);
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const assoBtn = document.getElementById('asso-toggle-btn');
+    const assoMore = document.getElementById('asso-more');
+    if (!assoBtn || !assoMore) return;
+
+    assoBtn.addEventListener('click', function () {
+      const isOpen = assoMore.classList.toggle('open');
+      assoBtn.classList.toggle('open', isOpen);
+      const label = assoBtn.querySelector('.asso-toggle-text');
+      if (label) {
+        label.textContent = isOpen
+          ? assoBtn.dataset.labelClose
+          : assoBtn.dataset.labelOpen;
+      }
+    });
+  });
 
   document.addEventListener('DOMContentLoaded', function () {
     const wrapper = document.getElementById('apropos-video-wrapper');
